@@ -8,7 +8,13 @@ public class Event : BaseEntity
     
     public int HostId { get; set; }
 
+    public EventDetails EventDetails { get; set; } = default!;
+
     public EventType EventType { get; set; } = default!;
 
     public Host Host { get; set; } = default!;
+
+    public List<TicketType> TicketTypes { get; set; } = [];
+
+    public List<Client> AddedToFavouriteBy { get; set; } = [];
 }

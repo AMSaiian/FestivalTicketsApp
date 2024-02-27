@@ -11,4 +11,6 @@ public class Location : BaseEntity
     public double Latitude { get; set; }
     
     public double Longitude { get; set; }
+
+    public List<Host> Hosts { get; set; } = [];
 }

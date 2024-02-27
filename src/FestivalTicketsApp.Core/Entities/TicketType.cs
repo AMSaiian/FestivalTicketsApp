@@ -9,4 +9,6 @@ public class TicketType : BaseEntity
     public int EventId { get; set; }
 
     public Event Event { get; set; } = default!;
+    
+    public List<Ticket> TicketsWithType { get; set; } = [];
 }

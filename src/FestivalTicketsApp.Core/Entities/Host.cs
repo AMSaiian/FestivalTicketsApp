@@ -8,7 +8,11 @@ public class Host : BaseEntity
     
     public int LocationId { get; set; }
 
+    public HostDetails Details { get; set; } = default!;
+
     public HostType HostType { get; set; } = default!;
 
     public Location Location { get; set; } = default!;
+
+    public List<Event> HostedEvents { get; set; } = [];
 }

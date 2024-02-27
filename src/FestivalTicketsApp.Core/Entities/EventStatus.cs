@@ -1,8 +1,8 @@
 ﻿namespace FestivalTicketsApp.Core.Entities;
 
-public class TicketStatus : BaseEntity
+public class EventStatus : BaseEntity
 {
     public string Status { get; set; } = default!;
 
-    public List<Ticket> TicketsWithStatus { get; set; } = [];
+    public List<Event> EventsWithStatus { get; set; } = [];
 }
