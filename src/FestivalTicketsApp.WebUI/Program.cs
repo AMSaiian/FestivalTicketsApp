@@ -1,4 +1,12 @@
+using FestivalTicketsApp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Will be extracted to extend method
+string? connectionString = builder.Configuration.GetConnectionString("LocalInstance");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
