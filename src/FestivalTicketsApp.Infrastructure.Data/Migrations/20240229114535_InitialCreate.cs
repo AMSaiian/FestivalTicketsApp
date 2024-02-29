@@ -169,8 +169,8 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -214,8 +214,8 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -230,7 +230,7 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TypeGenres",
+                name: "EventGenres",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -240,9 +240,9 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TypeGenres", x => x.Id);
+                    table.PrimaryKey("PK_EventGenres", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TypeGenres_EventTypes_EventTypeId",
+                        name: "FK_EventGenres_EventTypes_EventTypeId",
                         column: x => x.EventTypeId,
                         principalTable: "EventTypes",
                         principalColumn: "Id",
@@ -283,7 +283,7 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    EventTypeId = table.Column<int>(type: "int", nullable: false),
+                    EventGenreId = table.Column<int>(type: "int", nullable: false),
                     HostId = table.Column<int>(type: "int", nullable: false),
                     EventStatusId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -291,15 +291,15 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Events_EventStatuses_EventStatusId",
-                        column: x => x.EventStatusId,
-                        principalTable: "EventStatuses",
+                        name: "FK_Events_EventGenres_EventGenreId",
+                        column: x => x.EventGenreId,
+                        principalTable: "EventGenres",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Events_EventTypes_EventTypeId",
-                        column: x => x.EventTypeId,
-                        principalTable: "EventTypes",
+                        name: "FK_Events_EventStatuses_EventStatusId",
+                        column: x => x.EventStatusId,
+                        principalTable: "EventStatuses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -362,11 +362,14 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Duration = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EventDetails", x => x.Id);
+                    table.CheckConstraint("CK_Duration", "[Duration] > 0");
                     table.ForeignKey(
                         name: "FK_EventDetails_Events_Id",
                         column: x => x.Id,
@@ -490,14 +493,25 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 column: "FavouriteEventsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EventGenres_EventTypeId",
+                table: "EventGenres",
+                column: "EventTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventGenres_Genre_EventTypeId",
+                table: "EventGenres",
+                columns: new[] { "Genre", "EventTypeId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_EventGenreId",
+                table: "Events",
+                column: "EventGenreId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_EventStatusId",
                 table: "Events",
                 column: "EventStatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Events_EventTypeId",
-                table: "Events",
-                column: "EventTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_HostId",
@@ -569,17 +583,6 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 table: "TicketTypes",
                 columns: new[] { "Name", "EventId" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TypeGenres_EventTypeId",
-                table: "TypeGenres",
-                column: "EventTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TypeGenres_Genre_EventTypeId",
-                table: "TypeGenres",
-                columns: new[] { "Genre", "EventTypeId" },
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -613,9 +616,6 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "TypeGenres");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -631,13 +631,16 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
+                name: "EventGenres");
+
+            migrationBuilder.DropTable(
                 name: "EventStatuses");
 
             migrationBuilder.DropTable(
-                name: "EventTypes");
+                name: "Hosts");
 
             migrationBuilder.DropTable(
-                name: "Hosts");
+                name: "EventTypes");
 
             migrationBuilder.DropTable(
                 name: "HostTypes");

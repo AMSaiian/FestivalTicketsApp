@@ -47,3 +47,6 @@ This is an app to purchase tickets for different events: concerts, perfomances, 
 
 #### Domain scheme:
 ![Image](https://i.imgur.com/FNwgrGG.jpeg)
+
+#### Updated domain scheme (29.02.2024):
+![Image](https://i.imgur.com/QmGrD4M.jpeg)

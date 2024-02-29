@@ -9,5 +9,7 @@ public class EventDetailsConfiguration : IEntityTypeConfiguration<EventDetails>
     public void Configure(EntityTypeBuilder<EventDetails> builder)
     {
         builder.HasKey(ed => ed.Id);
+
+        builder.ToTable(ed => ed.HasCheckConstraint("CK_Duration", "[Duration] > 0"));
     }
 }

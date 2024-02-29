@@ -25,7 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<EventType> EventTypes { get; set; } = default!;
 
-    public DbSet<TypeGenre> TypeGenres { get; set; } = default!;
+    public DbSet<EventGenre> EventGenres { get; set; } = default!;
 
     public DbSet<EventStatus> EventStatuses { get; set; } = default!;
 

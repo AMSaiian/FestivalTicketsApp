@@ -13,10 +13,6 @@ public class EventTypeConfiguration : IEntityTypeConfiguration<EventType>
         builder.HasIndex(et => et.Name)
             .IsUnique();
 
-        builder.HasMany(et => et.EventsWithType)
-            .WithOne(e => e.EventType)
-            .HasForeignKey(e => e.EventTypeId);
-        
         builder.HasMany(et => et.EventTypeGenres)
             .WithOne(e => e.EventType)
             .HasForeignKey(e => e.EventTypeId);

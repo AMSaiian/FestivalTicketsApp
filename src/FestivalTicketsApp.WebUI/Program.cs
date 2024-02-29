@@ -1,12 +1,12 @@
 using FestivalTicketsApp.Infrastructure.Data;
+using FestivalTicketsApp.WebUI;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Will be extracted to extend method
-string? connectionString = builder.Configuration.GetConnectionString("LocalInstance");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext(builder.Configuration);
+
+builder.Services.AddIdentity();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -31,5 +31,14 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+try
+{
+    await app.SeedData();
+}
+catch (Exception ex)
+{
+    // Logging will be implemented in future
+}
 
 app.Run();

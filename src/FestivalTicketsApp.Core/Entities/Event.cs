@@ -4,14 +4,14 @@ public class Event : BaseEntity
 {
     public string Title { get; set; } = default!;
     
-    public int EventTypeId { get; set; }
+    public int EventGenreId { get; set; }
     
     public int HostId { get; set; }
     
     public int EventStatusId { get; set; }
     public EventDetails EventDetails { get; set; } = default!;
 
-    public EventType EventType { get; set; } = default!;
+    public EventGenre EventGenre { get; set; } = default!;
 
     public EventStatus EventStatus { get; set; } = default!;
 

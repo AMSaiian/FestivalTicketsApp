@@ -4,7 +4,5 @@ public class EventType : BaseEntity
 {
     public string Name { get; set; } = default!;
 
-    public List<Event> EventsWithType { get; set; } = [];
-
-    public List<TypeGenre> EventTypeGenres { get; set; } = [];
+    public List<EventGenre> EventTypeGenres { get; set; } = [];
 }

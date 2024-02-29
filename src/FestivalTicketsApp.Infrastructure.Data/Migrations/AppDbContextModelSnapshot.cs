@@ -131,10 +131,10 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EventStatusId")
+                    b.Property<int>("EventGenreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EventTypeId")
+                    b.Property<int>("EventStatusId")
                         .HasColumnType("int");
 
                     b.Property<int>("HostId")
@@ -147,9 +147,9 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EventStatusId");
+                    b.HasIndex("EventGenreId");
 
-                    b.HasIndex("EventTypeId");
+                    b.HasIndex("EventStatusId");
 
                     b.HasIndex("HostId");
 
@@ -165,9 +165,43 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
-                    b.ToTable("EventDetails");
+                    b.ToTable("EventDetails", t =>
+                        {
+                            t.HasCheckConstraint("CK_Duration", "[Duration] > 0");
+                        });
+                });
+
+            modelBuilder.Entity("FestivalTicketsApp.Core.Entities.EventGenre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Genre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventTypeId");
+
+                    b.HasIndex("Genre", "EventTypeId")
+                        .IsUnique();
+
+                    b.ToTable("EventGenres");
                 });
 
             modelBuilder.Entity("FestivalTicketsApp.Core.Entities.EventStatus", b =>
@@ -413,31 +447,6 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FestivalTicketsApp.Core.Entities.TypeGenre", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EventTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventTypeId");
-
-                    b.HasIndex("Genre", "EventTypeId")
-                        .IsUnique();
-
-                    b.ToTable("TypeGenres");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -519,10 +528,12 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -558,10 +569,12 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -588,15 +601,15 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("FestivalTicketsApp.Core.Entities.Event", b =>
                 {
-                    b.HasOne("FestivalTicketsApp.Core.Entities.EventStatus", "EventStatus")
-                        .WithMany("EventsWithStatus")
-                        .HasForeignKey("EventStatusId")
+                    b.HasOne("FestivalTicketsApp.Core.Entities.EventGenre", "EventGenre")
+                        .WithMany("EventsWithGenre")
+                        .HasForeignKey("EventGenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FestivalTicketsApp.Core.Entities.EventType", "EventType")
-                        .WithMany("EventsWithType")
-                        .HasForeignKey("EventTypeId")
+                    b.HasOne("FestivalTicketsApp.Core.Entities.EventStatus", "EventStatus")
+                        .WithMany("EventsWithStatus")
+                        .HasForeignKey("EventStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -606,9 +619,9 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("EventStatus");
+                    b.Navigation("EventGenre");
 
-                    b.Navigation("EventType");
+                    b.Navigation("EventStatus");
 
                     b.Navigation("Host");
                 });
@@ -620,6 +633,17 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                         .HasForeignKey("FestivalTicketsApp.Core.Entities.EventDetails", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FestivalTicketsApp.Core.Entities.EventGenre", b =>
+                {
+                    b.HasOne("FestivalTicketsApp.Core.Entities.EventType", "EventType")
+                        .WithMany("EventTypeGenres")
+                        .HasForeignKey("EventTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EventType");
                 });
 
             modelBuilder.Entity("FestivalTicketsApp.Core.Entities.Host", b =>
@@ -686,17 +710,6 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("FestivalTicketsApp.Core.Entities.TypeGenre", b =>
-                {
-                    b.HasOne("FestivalTicketsApp.Core.Entities.EventType", "EventType")
-                        .WithMany("EventTypeGenres")
-                        .HasForeignKey("EventTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EventType");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -761,6 +774,11 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                     b.Navigation("TicketTypes");
                 });
 
+            modelBuilder.Entity("FestivalTicketsApp.Core.Entities.EventGenre", b =>
+                {
+                    b.Navigation("EventsWithGenre");
+                });
+
             modelBuilder.Entity("FestivalTicketsApp.Core.Entities.EventStatus", b =>
                 {
                     b.Navigation("EventsWithStatus");
@@ -769,8 +787,6 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
             modelBuilder.Entity("FestivalTicketsApp.Core.Entities.EventType", b =>
                 {
                     b.Navigation("EventTypeGenres");
-
-                    b.Navigation("EventsWithType");
                 });
 
             modelBuilder.Entity("FestivalTicketsApp.Core.Entities.Host", b =>
