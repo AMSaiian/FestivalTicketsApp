@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\FestivalTicketsApp.Infrastructure.Data\FestivalTicketsApp.Infrastructure.Data.csproj" />
+      <ProjectReference Include="..\FestivalTicketsApp.Shared\FestivalTicketsApp.Shared.csproj" />
+    </ItemGroup>
+
 </Project>
