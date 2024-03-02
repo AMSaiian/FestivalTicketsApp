@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FestivalTicketsApp.Application.EventsService;
 
-public class EventsService(in AppDbContext context) : IEventsService
+public class EventsService(AppDbContext context) : IEventsService
 {
     private readonly AppDbContext _context = context;
 

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FestivalTicketsApp.Application.HostsService;
 
-public class HostsService(in AppDbContext context) : IHostsService
+public class HostsService(AppDbContext context) : IHostsService
 {
     private readonly AppDbContext _context = context;
 
