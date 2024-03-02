@@ -6,20 +6,12 @@ namespace FestivalTicketsApp.WebUI.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private static readonly string _layoutName = "MainLayout";
 
-    public HomeController(ILogger<HomeController> logger)
+    public async Task<IActionResult> Index()
     {
-        _logger = logger;
-    }
-
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
+        ViewBag.Layout = _layoutName;
+        
         return View();
     }
 

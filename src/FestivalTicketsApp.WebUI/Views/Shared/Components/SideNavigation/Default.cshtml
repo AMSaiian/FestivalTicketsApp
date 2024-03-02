@@ -1,0 +1,18 @@
+﻿@model List<FestivalTicketsApp.Application.HostsService.DTO.HostTypeDto>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-collapse collapse d-sm-inline-flex flex-column align-content-center justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                @{
+                    foreach (var hostType in Model)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@hostType.Name</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

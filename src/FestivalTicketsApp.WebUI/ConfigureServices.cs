@@ -1,4 +1,6 @@
-﻿using FestivalTicketsApp.Core.Entities;
+﻿using FestivalTicketsApp.Application.EventsService;
+using FestivalTicketsApp.Application.HostsService;
+using FestivalTicketsApp.Core.Entities;
 using FestivalTicketsApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +34,14 @@ public static class ConfigureServices
                 options.Password.RequiredLength = 8;
             })
             .AddEntityFrameworkStores<AppDbContext>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<IEventsService, EventsService>();
+        services.AddScoped<IHostsService, HostsService>();
 
         return services;
     }

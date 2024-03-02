@@ -8,6 +8,8 @@ builder.Services.AddDbContext(builder.Configuration);
 
 builder.Services.AddIdentity();
 
+builder.Services.AddServices();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

@@ -46,6 +46,20 @@ public class EventsService(AppDbContext context) : IEventsService
 
         return result;
     }
+    
+    public async Task<List<EventTypeDto>> GetEventTypes()
+    {
+        IQueryable<EventType> eventTypeQuery = _context.EventTypes
+            .AsNoTracking()
+            .AsQueryable();
+
+        List<EventTypeDto> result = await eventTypeQuery
+            .Select(et => 
+                new EventTypeDto(et.Id, et.Name))
+            .ToListAsync();
+
+        return result;
+    }
 
     private Task<IQueryable<Event>> ProcessEventFilter(
         IQueryable<Event> eventsQuery, 

@@ -8,4 +8,6 @@ public interface IEventsService
     public Task<List<EventDto>> GetEvents(EventsFilter filter);
 
     public Task<List<GenreDto>> GetGenres(GenresFilter filter);
+
+    public Task<List<EventTypeDto>> GetEventTypes();
 }
