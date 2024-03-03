@@ -15,9 +15,8 @@ public class EventsService(AppDbContext context) : IEventsService
         IQueryable<Event> eventsQuery = _context.Events
             .AsNoTracking()
             .Include(e => e.EventDetails)
-            .Include(e => e.EventGenre)
+            .Include(e => e.EventGenre).ThenInclude(eg => eg.EventType)
             .Include(e => e.EventStatus)
-            .Include(e => e.Host).ThenInclude(e => e.Location)
             .AsQueryable();
 
         eventsQuery = await ProcessEventFilter(eventsQuery, filter);
@@ -72,14 +71,14 @@ public class EventsService(AppDbContext context) : IEventsService
             eventsQuery = eventsQuery.Where(e => e.EventDetails.StartDate >= filter.StartDate);
         
         if (filter.EndDate is not null)
-            eventsQuery = eventsQuery.Where(e => e.EventDetails.StartDate <= filter.EndDate);
-
-        if (filter.HostTypeId is not null)
-            eventsQuery = eventsQuery.Where(e => e.Host.HostTypeId == filter.HostTypeId);
+            eventsQuery = eventsQuery.Where(e => e.EventDetails.StartDate.Date <= filter.EndDate);
 
         if (filter.HostId is not null)
             eventsQuery = eventsQuery.Where(e => e.HostId == filter.HostId);
 
+        if (filter.EventTypeId is not null)
+            eventsQuery = eventsQuery.Where(e => e.EventGenre.EventTypeId == filter.EventTypeId);
+        
         if (filter.GenreId is not null)
             eventsQuery = eventsQuery.Where(e => e.EventGenreId == filter.GenreId);
 
@@ -87,7 +86,7 @@ public class EventsService(AppDbContext context) : IEventsService
 
         if (filter.Pagination is not null)
         {
-            int skipValues = filter.Pagination.PageNum - 1 * filter.Pagination.PageSize;
+            int skipValues = (filter.Pagination.PageNum - 1) * filter.Pagination.PageSize;
             eventsQuery = eventsQuery.Skip(skipValues).Take(filter.Pagination.PageSize);
         }
 

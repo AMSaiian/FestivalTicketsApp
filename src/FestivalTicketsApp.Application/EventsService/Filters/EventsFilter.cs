@@ -6,6 +6,6 @@ public record EventsFilter(
     PagingFilter? Pagination, 
     DateTime? StartDate, DateTime? EndDate,
     int? HostId,
-    int? HostTypeId,
+    int? EventTypeId,
     int? GenreId,
     string? CityName);

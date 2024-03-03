@@ -1,0 +1,14 @@
+﻿@model List<FestivalTicketsApp.Application.EventsService.DTO.EventDto>
+
+<div>
+    @{
+        foreach (var eventDto in Model)
+        {
+            <div>
+                <p>@eventDto.Title</p>
+                <p>@eventDto.HostName</p>
+                <p>@eventDto.StartDate</p>
+            </div>
+        }
+    }
+</div>

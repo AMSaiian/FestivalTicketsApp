@@ -9,7 +9,7 @@
                         foreach (var eventType in Model)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@eventType.Name</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Event" as asp-action="List" asp-route-id="@eventType.Id">@eventType.Name</a>
                             </li>
                         }
                     }

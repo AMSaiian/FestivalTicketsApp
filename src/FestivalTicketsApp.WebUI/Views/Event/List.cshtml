@@ -1,0 +1,8 @@
+﻿@model EventListViewModel
+
+<div class="container">
+    @{
+        await Html.RenderPartialAsync("FilterPart");
+        await Html.RenderPartialAsync("EventsPart", Model.Events);
+    }
+</div>

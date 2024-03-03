@@ -58,10 +58,12 @@ public class HostsService(AppDbContext context) : IHostsService
         
         if (filter.HostTypeId is not null)
             hostsQuery = hostsQuery.Where(h => h.HostTypeId == filter.HostTypeId);
+
+        hostsQuery = hostsQuery.OrderBy(h => h.Id);
         
         if (filter.Pagination is not null)
         {
-            int skipValues = filter.Pagination.PageNum - 1 * filter.Pagination.PageSize;
+            int skipValues = (filter.Pagination.PageNum - 1) * filter.Pagination.PageSize;
             hostsQuery = hostsQuery.Skip(skipValues).Take(filter.Pagination.PageSize);
         }
         

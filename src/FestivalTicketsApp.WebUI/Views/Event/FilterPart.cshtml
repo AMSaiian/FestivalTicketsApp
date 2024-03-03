@@ -1,0 +1,25 @@
+﻿@model EventListViewModel
+
+@{
+    List<SelectListItem> genreOptions = Model.Genres
+        .Select(dto => 
+            new SelectListItem { Value = dto.Id.ToString(), Text = dto.Name })
+        .ToList();
+
+    genreOptions.Insert(0, new() { Value = null, Text = "All" });
+    
+    List<SelectListItem> cityOptions = Model.CityNames        
+        .Select(dto => 
+            new SelectListItem { Value = dto, Text = dto })
+        .ToList();
+}
+
+<div>
+    <form asp-controller="Event" asp-action="List" method="post">
+        <input type="date" asp-for="Filter.StartDate"></input>
+        <input type="date" asp-for="Filter.EndDate"></input>
+        <select asp-for="Filter.GenreId" asp-items="@genreOptions"></select>
+        <select asp-for="Filter.CityName" asp-items="@cityOptions"></select>
+        <input type="submit"></input>
+    </form>
+</div>
