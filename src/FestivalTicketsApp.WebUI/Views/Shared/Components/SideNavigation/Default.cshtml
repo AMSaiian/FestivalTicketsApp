@@ -8,7 +8,7 @@
                     foreach (var hostType in Model)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@hostType.Name</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Host" asp-action="List" asp-route-id="@hostType.Id">@hostType.Name</a>
                         </li>
                     }
                 }

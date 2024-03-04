@@ -2,7 +2,7 @@
 
 namespace FestivalTicketsApp.Application.EventService.Filters;
 
-public record EventsFilter(
+public record EventFilter(
     PagingFilter? Pagination, 
     DateTime? StartDate, DateTime? EndDate,
     int? HostId,

@@ -2,7 +2,7 @@
 
 namespace FestivalTicketsApp.Application.HostService.Filters;
 
-public record HostsFilter(
+public record HostFilter(
     PagingFilter? Pagination, 
     int? HostTypeId,
     string? CityName);

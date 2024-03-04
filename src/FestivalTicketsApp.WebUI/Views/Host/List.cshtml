@@ -1,0 +1,7 @@
+﻿@model FestivalTicketsApp.WebUI.Models.HostList.HostListViewModel
+<div class="container">
+    @{
+        await Html.RenderPartialAsync("FilterPart");
+        await Html.RenderPartialAsync("HostsPart", Model.Hosts);
+    }
+</div>

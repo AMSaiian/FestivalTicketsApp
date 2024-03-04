@@ -1,0 +1,13 @@
+﻿@model List<FestivalTicketsApp.Application.HostService.DTO.HostedEventDto>
+
+<div class="border border-dark">
+    @{
+        foreach (var hostedEventDto in Model)
+        {
+            <a asp-controller="Event" asp-action="Details" asp-route-id="@hostedEventDto.Id">
+                <p>@hostedEventDto.Title</p>
+                <p>@hostedEventDto.StartDate</p>
+            </a>
+        }
+    }
+</div>

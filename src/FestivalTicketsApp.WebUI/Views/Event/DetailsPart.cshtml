@@ -1,0 +1,7 @@
+﻿@model FestivalTicketsApp.Application.EventService.DTO.EventWithDetailsDto
+
+<div class="border border-dark">
+    <a asp-controller="Host" asp-action="Details" asp-route-id="@Model.HostId">@Model.HostName</a>
+    <p>@Model.StartDate</p>
+    <p>@Model.Duration min</p>
+</div>

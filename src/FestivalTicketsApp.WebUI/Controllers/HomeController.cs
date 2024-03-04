@@ -6,12 +6,8 @@ namespace FestivalTicketsApp.WebUI.Controllers;
 
 public class HomeController : Controller
 {
-    private static readonly string LayoutName = "MainLayout";
-
     public Task<IActionResult> Index()
     {
-        ViewBag.Layout = LayoutName;
-        
         return Task.FromResult((IActionResult)View());
     }
 

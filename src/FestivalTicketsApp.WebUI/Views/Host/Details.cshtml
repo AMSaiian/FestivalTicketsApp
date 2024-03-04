@@ -1,0 +1,13 @@
+﻿@model FestivalTicketsApp.WebUI.Models.HostDetails.HostDetailsViewModel
+
+<div class="border border-dark">
+    <p>@Model.Host.Name</p>
+</div>
+
+<div>
+    @{
+        await Html.RenderPartialAsync("DescriptionPart", Model.Host);
+        await Html.RenderPartialAsync("LocationPart", Model.Host.Location);
+        await Html.RenderPartialAsync("SameHostEventsPart", Model.HostedEvents);
+    }
+</div>

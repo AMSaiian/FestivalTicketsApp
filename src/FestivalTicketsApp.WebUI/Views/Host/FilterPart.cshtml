@@ -1,0 +1,15 @@
+﻿@model FestivalTicketsApp.WebUI.Models.HostList.HostListViewModel
+
+@{
+    List<SelectListItem> cityOptions = Model.CityNames!        
+        .Select(dto => 
+            new SelectListItem { Value = dto, Text = dto })
+        .ToList();
+}
+
+<div>
+    <form asp-controller="Host" asp-action="List" method="GET">
+        <select id="cityName" asp-for="QueryState!.CityName" asp-items="@cityOptions"></select>
+        <input type="submit" />
+    </form>
+</div>

@@ -3,6 +3,7 @@ using FestivalTicketsApp.Application.EventService.Filters;
 using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Shared;
 using FestivalTicketsApp.WebUI.Models;
+using FestivalTicketsApp.WebUI.Models.EventDetails;
 using FestivalTicketsApp.WebUI.Models.EventList;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,11 +25,11 @@ public class EventController(IEventService eventService, IHostService hostServic
          
          viewModel.CityNames = await _hostService.GetCities();
          
-         GenresFilter genresFilter = new(eventTypeId);
+         GenreFilter genreFilter = new(eventTypeId);
          
-         viewModel.Genres = await _eventService.GetGenres(genresFilter);
+         viewModel.Genres = await _eventService.GetGenres(genreFilter);
          
-         EventsFilter eventsFilter = new(
+         EventFilter eventFilter = new(
              new PagingFilter(), 
              query.StartDate, 
              query.EndDate, 
@@ -37,8 +38,23 @@ public class EventController(IEventService eventService, IHostService hostServic
              query.GenreId, 
              query.CityName);
          
-         viewModel.Events = await _eventService.GetEvents(eventsFilter);
+         viewModel.Events = await _eventService.GetEvents(eventFilter);
          
          return View(viewModel);
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        int eventId = id;
+
+        EventDetailsViewModel viewModel = new();
+
+        viewModel.Event = await _eventService.GetEventWithDetails(eventId);
+
+        int hostId = viewModel.Event.HostId;
+
+        viewModel.HostedEvents = await _hostService.GetHostedEvents(hostId);
+
+        return View(viewModel);
     }
 }

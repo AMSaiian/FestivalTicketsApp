@@ -10,7 +10,7 @@ public class EventService(AppDbContext context) : IEventService
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<List<EventDto>> GetEvents(EventsFilter filter)
+    public async Task<List<EventDto>> GetEvents(EventFilter filter)
     {
         IQueryable<Event> eventsQuery = _context.Events
                 .AsNoTracking()
@@ -29,7 +29,28 @@ public class EventService(AppDbContext context) : IEventService
         return result;
     }
 
-    public async Task<List<GenreDto>> GetGenres(GenresFilter filter)
+    public async Task<EventWithDetailsDto> GetEventWithDetails(int id)
+    {
+        IQueryable<Event> eventsQuery = _context.Events
+            .AsNoTracking()
+            .Include(e => e.EventDetails)
+            .Include(e => e.Host);
+        
+        Event? eventEntity = await eventsQuery.FirstOrDefaultAsync(e => e.Id == id);
+
+        EventWithDetailsDto? result = new EventWithDetailsDto(
+            eventEntity!.Id,
+            eventEntity.Title,
+            eventEntity.EventDetails.StartDate,
+            eventEntity.HostId,
+            eventEntity.Host.Name,
+            eventEntity.EventDetails.Description,
+            eventEntity.EventDetails.Duration);
+
+        return result;
+    }
+
+    public async Task<List<GenreDto>> GetGenres(GenreFilter filter)
     {
         IQueryable<EventGenre> genresQuery = _context.EventGenres
                 .AsNoTracking();
@@ -59,7 +80,7 @@ public class EventService(AppDbContext context) : IEventService
 
     private Task<IQueryable<Event>> ProcessEventFilter(
         IQueryable<Event> eventsQuery,
-        EventsFilter filter)
+        EventFilter filter)
     {
         if (filter.CityName is not null)
             eventsQuery = eventsQuery.Where(e => e.Host.Location.CityName == filter.CityName);
@@ -91,7 +112,7 @@ public class EventService(AppDbContext context) : IEventService
         return Task.FromResult(eventsQuery);
     }
 
-    private Task<IQueryable<EventGenre>> ProcessGenreFilter(IQueryable<EventGenre> genresQuery, GenresFilter filter)
+    private Task<IQueryable<EventGenre>> ProcessGenreFilter(IQueryable<EventGenre> genresQuery, GenreFilter filter)
     {
         genresQuery = genresQuery
             .Where(g => g.EventTypeId == filter.EventTypeId)

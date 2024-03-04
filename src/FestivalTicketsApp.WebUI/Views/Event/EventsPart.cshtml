@@ -4,11 +4,14 @@
     @{
         foreach (var eventDto in Model)
         {
-            <div>
-                <p>@eventDto.Title</p>
-                <p>@eventDto.HostName</p>
-                <p>@eventDto.StartDate</p>
+            <div class="border border-dark">
+                <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                    <p>@eventDto.Title</p>
+                    <p>@eventDto.HostName</p>
+                    <p>@eventDto.StartDate</p>
+                </a>
             </div>
+
         }
     }
 </div>

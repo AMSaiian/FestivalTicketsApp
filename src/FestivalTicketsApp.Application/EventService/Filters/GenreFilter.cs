@@ -1,3 +1,3 @@
 ﻿namespace FestivalTicketsApp.Application.EventService.Filters;
 
-public record GenresFilter(int EventTypeId);
+public record GenreFilter(int EventTypeId);
