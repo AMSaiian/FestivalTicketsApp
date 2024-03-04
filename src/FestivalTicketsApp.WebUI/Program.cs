@@ -1,6 +1,4 @@
-using FestivalTicketsApp.Infrastructure.Data;
 using FestivalTicketsApp.WebUI;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

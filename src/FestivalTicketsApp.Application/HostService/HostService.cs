@@ -1,13 +1,12 @@
-﻿using FestivalTicketsApp.Application.EventsService.DTO;
-using FestivalTicketsApp.Application.HostsService.DTO;
-using FestivalTicketsApp.Application.HostsService.Filters;
+﻿using FestivalTicketsApp.Application.HostService.DTO;
+using FestivalTicketsApp.Application.HostService.Filters;
 using FestivalTicketsApp.Core.Entities;
 using FestivalTicketsApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace FestivalTicketsApp.Application.HostsService;
+namespace FestivalTicketsApp.Application.HostService;
 
-public class HostsService(AppDbContext context) : IHostsService
+public class HostService(AppDbContext context) : IHostService
 {
     private readonly AppDbContext _context = context;
 
@@ -16,8 +15,7 @@ public class HostsService(AppDbContext context) : IHostsService
         IQueryable<Host> hostsQuery = _context.Hosts
             .AsNoTracking()
             .Include(h => h.Location)
-            .Include(h => h.HostType)
-            .AsQueryable();
+            .Include(h => h.HostType);
 
         hostsQuery = await ProcessHostFilter(hostsQuery, filter);
 
@@ -30,7 +28,8 @@ public class HostsService(AppDbContext context) : IHostsService
 
     public async Task<List<HostTypeDto>> GetHostTypes()
     {
-        IQueryable<HostType> hostTypesQuery = _context.HostTypes.AsQueryable();
+        IQueryable<HostType> hostTypesQuery = _context.HostTypes
+            .AsNoTracking();
 
         List<HostTypeDto> result = await hostTypesQuery
             .Select(ht => new HostTypeDto(ht.Id, ht.Name))
@@ -41,7 +40,8 @@ public class HostsService(AppDbContext context) : IHostsService
 
     public async Task<List<string>> GetCities()
     {
-        IQueryable<Location> locationsQuery = _context.Locations.AsQueryable();
+        IQueryable<Location> locationsQuery = _context.Locations
+            .AsNoTracking();
         
         List<string> result = await locationsQuery
             .GroupBy(l => l.CityName)

@@ -1,6 +1,6 @@
 ﻿using FestivalTicketsApp.Shared;
 
-namespace FestivalTicketsApp.Application.EventsService.Filters;
+namespace FestivalTicketsApp.Application.EventService.Filters;
 
 public record EventsFilter(
     PagingFilter? Pagination, 

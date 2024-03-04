@@ -1,16 +1,16 @@
-﻿using FestivalTicketsApp.Application.EventsService;
-using FestivalTicketsApp.Application.EventsService.DTO;
+﻿using FestivalTicketsApp.Application.EventService;
+using FestivalTicketsApp.Application.EventService.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.ViewComponents;
 
-public class MainLayoutHeaderViewComponent(IEventsService eventsService) : ViewComponent
+public class MainLayoutHeaderViewComponent(IEventService eventService) : ViewComponent
 {
-    private readonly IEventsService _eventsService = eventsService;
+    private readonly IEventService _eventService = eventService;
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        List<EventTypeDto> eventTypes = await _eventsService.GetEventTypes();
+        List<EventTypeDto> eventTypes = await _eventService.GetEventTypes();
 
         return View(eventTypes);
     }

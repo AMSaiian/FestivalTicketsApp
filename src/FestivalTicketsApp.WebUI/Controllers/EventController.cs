@@ -1,43 +1,44 @@
-﻿using FestivalTicketsApp.Application.EventsService;
-using FestivalTicketsApp.Application.EventsService.Filters;
-using FestivalTicketsApp.Application.HostsService;
+﻿using FestivalTicketsApp.Application.EventService;
+using FestivalTicketsApp.Application.EventService.Filters;
+using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Shared;
 using FestivalTicketsApp.WebUI.Models;
+using FestivalTicketsApp.WebUI.Models.EventList;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.Controllers;
 
-public class EventController(IEventsService eventsService, IHostsService hostsService) : Controller
+public class EventController(IEventService eventService, IHostService hostService) : Controller
 {
-    private static string LayoutName = "MainLayout";
+    private readonly IEventService _eventService = eventService;
 
-    private readonly IEventsService _eventsService = eventsService;
-
-    private readonly IHostsService _hostsService = hostsService;
+    private readonly IHostService _hostService = hostService;
     
-    [HttpGet]
-    [HttpPost]
-    public async Task<IActionResult> List(int id, EventListViewModel? viewModel)
-    {
-        int eventTypeId = id;
-        
-        viewModel.CityNames = await _hostsService.GetCities();
+    public async Task<IActionResult> List(int id, [FromQuery, Bind(Prefix = "QueryState")] EventListQuery query)
+     {
+         int eventTypeId = id;
 
-        GenresFilter genresFilter = new(eventTypeId);
+         EventListViewModel viewModel = new();
 
-        viewModel.Genres = await _eventsService.GetGenres(genresFilter);
-
-        EventsFilter eventsFilter = new(
-            new PagingFilter(),
-            viewModel.Filter.StartDate,
-            viewModel.Filter.EndDate,
-            null,
-            eventTypeId, 
-            viewModel.Filter.GenreId,
-            viewModel.Filter.CityName);
-
-        viewModel.Events = await _eventsService.GetEvents(eventsFilter);
-        
-        return View(viewModel);
+         viewModel.QueryState = query;
+         
+         viewModel.CityNames = await _hostService.GetCities();
+         
+         GenresFilter genresFilter = new(eventTypeId);
+         
+         viewModel.Genres = await _eventService.GetGenres(genresFilter);
+         
+         EventsFilter eventsFilter = new(
+             new PagingFilter(), 
+             query.StartDate, 
+             query.EndDate, 
+             null, 
+             eventTypeId, 
+             query.GenreId, 
+             query.CityName);
+         
+         viewModel.Events = await _eventService.GetEvents(eventsFilter);
+         
+         return View(viewModel);
     }
 }

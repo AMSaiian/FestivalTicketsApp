@@ -1,18 +1,16 @@
-﻿using FestivalTicketsApp.Application.EventsService;
-using FestivalTicketsApp.Application.EventsService.DTO;
-using FestivalTicketsApp.Application.HostsService;
-using FestivalTicketsApp.Application.HostsService.DTO;
+﻿using FestivalTicketsApp.Application.HostService;
+using FestivalTicketsApp.Application.HostService.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.ViewComponents;
 
-public class SideNavigationViewComponent(IHostsService hostsService) : ViewComponent
+public class SideNavigationViewComponent(IHostService hostService) : ViewComponent
 {
-    private readonly IHostsService _hostsService = hostsService;
+    private readonly IHostService _hostService = hostService;
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        List<HostTypeDto> hostTypes = await _hostsService.GetHostTypes();
+        List<HostTypeDto> hostTypes = await _hostService.GetHostTypes();
 
         return View(hostTypes);
     }

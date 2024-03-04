@@ -1,29 +1,28 @@
-﻿using FestivalTicketsApp.Application.EventsService.DTO;
-using FestivalTicketsApp.Application.EventsService.Filters;
+﻿using FestivalTicketsApp.Application.EventService.DTO;
+using FestivalTicketsApp.Application.EventService.Filters;
 using FestivalTicketsApp.Core.Entities;
 using FestivalTicketsApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace FestivalTicketsApp.Application.EventsService;
+namespace FestivalTicketsApp.Application.EventService;
 
-public class EventsService(AppDbContext context) : IEventsService
+public class EventService(AppDbContext context) : IEventService
 {
     private readonly AppDbContext _context = context;
 
     public async Task<List<EventDto>> GetEvents(EventsFilter filter)
     {
         IQueryable<Event> eventsQuery = _context.Events
-            .AsNoTracking()
-            .Include(e => e.EventDetails)
-            .Include(e => e.EventGenre).ThenInclude(eg => eg.EventType)
-            .Include(e => e.EventStatus)
-            .AsQueryable();
+                .AsNoTracking()
+                .Include(e => e.EventDetails)
+                .Include(e => e.EventGenre).ThenInclude(eg => eg.EventType)
+                .Include(e => e.EventStatus);
 
         eventsQuery = await ProcessEventFilter(eventsQuery, filter);
 
         List<EventDto> result = await eventsQuery
             .AsNoTracking()
-            .Select(e => 
+            .Select(e =>
                 new EventDto(e.Id, e.Title, e.EventDetails.StartDate, e.Host.Name))
             .ToListAsync();
 
@@ -33,27 +32,25 @@ public class EventsService(AppDbContext context) : IEventsService
     public async Task<List<GenreDto>> GetGenres(GenresFilter filter)
     {
         IQueryable<EventGenre> genresQuery = _context.EventGenres
-            .AsNoTracking()
-            .AsQueryable();
-        
+                .AsNoTracking();
+
         genresQuery = await ProcessGenreFilter(genresQuery, filter);
 
         List<GenreDto> result = await genresQuery
-            .Select(g => 
+            .Select(g =>
                 new GenreDto(g.Id, g.Genre))
             .ToListAsync();
 
         return result;
     }
-    
+
     public async Task<List<EventTypeDto>> GetEventTypes()
     {
         IQueryable<EventType> eventTypeQuery = _context.EventTypes
-            .AsNoTracking()
-            .AsQueryable();
+                .AsNoTracking();
 
         List<EventTypeDto> result = await eventTypeQuery
-            .Select(et => 
+            .Select(et =>
                 new EventTypeDto(et.Id, et.Name))
             .ToListAsync();
 
@@ -61,7 +58,7 @@ public class EventsService(AppDbContext context) : IEventsService
     }
 
     private Task<IQueryable<Event>> ProcessEventFilter(
-        IQueryable<Event> eventsQuery, 
+        IQueryable<Event> eventsQuery,
         EventsFilter filter)
     {
         if (filter.CityName is not null)
@@ -69,7 +66,7 @@ public class EventsService(AppDbContext context) : IEventsService
 
         if (filter.StartDate is not null)
             eventsQuery = eventsQuery.Where(e => e.EventDetails.StartDate >= filter.StartDate);
-        
+
         if (filter.EndDate is not null)
             eventsQuery = eventsQuery.Where(e => e.EventDetails.StartDate.Date <= filter.EndDate);
 
@@ -78,7 +75,7 @@ public class EventsService(AppDbContext context) : IEventsService
 
         if (filter.EventTypeId is not null)
             eventsQuery = eventsQuery.Where(e => e.EventGenre.EventTypeId == filter.EventTypeId);
-        
+
         if (filter.GenreId is not null)
             eventsQuery = eventsQuery.Where(e => e.EventGenreId == filter.GenreId);
 
@@ -93,13 +90,13 @@ public class EventsService(AppDbContext context) : IEventsService
 
         return Task.FromResult(eventsQuery);
     }
-    
+
     private Task<IQueryable<EventGenre>> ProcessGenreFilter(IQueryable<EventGenre> genresQuery, GenresFilter filter)
     {
         genresQuery = genresQuery
             .Where(g => g.EventTypeId == filter.EventTypeId)
             .OrderBy(g => g.Id);
-        
+
         return Task.FromResult(genresQuery);
     }
 }
