@@ -18,8 +18,22 @@
     <form asp-controller="Event" asp-action="List" method="GET">
         <input type="date" asp-for="QueryState!.StartDate" />
         <input type="date" asp-for="QueryState!.EndDate" />
-        <select id="genreId" asp-for="QueryState!.GenreId" asp-items="@genreOptions"></select>
-        <select id="cityName" asp-for="QueryState!.CityName" asp-items="@cityOptions"></select>
+        <select asp-for="QueryState!.GenreId" asp-items="@genreOptions"></select>
+        <select asp-for="QueryState!.CityName" asp-items="@cityOptions"></select>
         <input type="submit" />
     </form>
 </div>
+
+<script>
+    $(document).ready(() => {
+        $('#QueryState_StartDate').change((event) => {
+            var startDate = $(event.target).val();
+            $('#QueryState_EndDate').attr('min', startDate);
+        });
+    
+        $('#QueryState_EndDate').change((event) => {
+            var endDate = $(event.target).val();
+            $('#QueryState_StartDate').attr('max', endDate);
+        });
+    });
+</script>
