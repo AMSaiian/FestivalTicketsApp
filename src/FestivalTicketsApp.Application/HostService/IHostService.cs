@@ -14,4 +14,6 @@ public interface IHostService
     public Task<List<HostTypeDto>> GetHostTypes();
     
     public Task<List<string>> GetCities();
+
+    public Task<HostHallDetailsDto> GetHostHallDetails(int id);
 }

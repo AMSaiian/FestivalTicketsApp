@@ -61,12 +61,12 @@ public static class DevelopData
         new() 
         { 
             Id = 1, Description = "Lorem ipsum event 1", Duration = 120,
-            StartDate = new(2024, 3, 1, 17, 0, 0, DateTimeKind.Local)
+            StartDate = new(2024, 4, 1, 17, 0, 0, DateTimeKind.Local)
         },
         new() 
         { 
             Id = 2, Description = "Lorem ipsum event 2", Duration = 110,
-            StartDate = new(2024, 3, 2, 17, 0, 0, DateTimeKind.Local)
+            StartDate = new(2024, 4, 2, 17, 0, 0, DateTimeKind.Local)
         }
     ];
 
@@ -158,7 +158,7 @@ public static class DevelopData
 
         for (int i = 1; i <= HostDetails[1].SeatsInRow; i++)
         {
-            Tickets.Add(new() { RowNum = 1, SeatNum = i, TicketStatusId = 1, TicketTypeId = 3 });
+            Tickets.Add(new() { RowNum = 1, SeatNum = i, TicketStatusId = 1, TicketTypeId = 4 });
         }
     }
 

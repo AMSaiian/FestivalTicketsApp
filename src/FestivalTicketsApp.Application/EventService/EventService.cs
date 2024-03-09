@@ -29,6 +29,28 @@ public class EventService(AppDbContext context) : IEventService
         return result;
     }
 
+    public async Task<EventDto> GetEventById(int id)
+    {
+        IQueryable<Event> eventQuery = _context.Events
+            .AsNoTracking()
+            .Include(e => e.EventDetails)
+            .Include(e => e.Host);
+
+        Event? eventEntity = await eventQuery.FirstOrDefaultAsync(e => e.Id == id);
+        
+        // Future error handling
+        if (eventEntity is null)
+            return new EventDto(default, default, default, default);
+
+        EventDto result = new EventDto(
+            eventEntity.Id,
+            eventEntity.Title,
+            eventEntity.EventDetails.StartDate,
+            eventEntity.Host.Name);
+
+        return result;
+    }
+
     public async Task<EventWithDetailsDto> GetEventWithDetails(int id)
     {
         IQueryable<Event> eventsQuery = _context.Events

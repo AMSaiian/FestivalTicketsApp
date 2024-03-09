@@ -1,0 +1,27 @@
+﻿@model TicketSelectionViewModel
+
+<form class="container-fluid" asp-controller="Ticket" asp-action="Confirmation" 
+      asp-route-id="@ViewContext.RouteData.Values["id"]" method="POST">
+    @{
+        var ticket = Model.Tickets.GetEnumerator(); 
+        
+        for (int rowNum = 1; rowNum <= Model.HallDetails.RowAmount; rowNum++)
+        {
+            <div class="row">
+                @{
+                    for (int seatNum = 1; seatNum <= Model.HallDetails.SeatsInRow; seatNum++)
+                    {
+                        ticket.MoveNext();
+                        <div class="col">
+                            <input type="checkbox" name="tickets" value="@ticket.Current.Id" 
+                                   @if (ticket.Current.Status != "Available") { <text>disabled</text> }>
+                        </div>
+                    }
+                }
+            </div>
+        }
+        
+        ticket.Dispose();
+        <button class="btn-primary" type="submit">Confirm</button>
+    }
+</form>

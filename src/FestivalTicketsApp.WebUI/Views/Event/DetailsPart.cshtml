@@ -4,4 +4,7 @@
     <a asp-controller="Host" asp-action="Details" asp-route-id="@Model.HostId">@Model.HostName</a>
     <p>@Model.StartDate</p>
     <p>@Model.Duration min</p>
+    <a class="btn-primary" asp-controller="Ticket" asp-action="Selection" asp-route-id="@Model.Id">
+        Select tickets
+    </a>
 </div>

@@ -1,0 +1,21 @@
+﻿@using FestivalTicketsApp.Application.TicketService
+@model TicketConfirmationViewModel
+
+<div class="container-fluid">
+    @{
+        <div class="d-flex border border-dark">
+            <p>@Model.Event.Title</p>
+            <p>@Model.Event.HostName</p>
+            <p>@Model.Event.StartDate</p>
+        </div>
+        foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
+        {
+            <div class="d-flex border border-dark">
+                <p>@ticket.RowNum</p>
+                <p>@ticket.SeatNum</p>
+                <p>@ticket.TypeName</p>
+                <p>@ticket.Price</p>
+            </div>
+        }
+    }
+</div>
