@@ -1,5 +1,5 @@
-﻿@using FestivalTicketsApp.Application.TicketService
-@model TicketConfirmationViewModel
+﻿@using FestivalTicketsApp.Application.TicketService.DTO
+@model FestivalTicketsApp.WebUI.Models.Ticket.TicketConfirmationViewModel
 
 <div class="container-fluid">
     @{
@@ -11,11 +11,27 @@
         foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
         {
             <div class="d-flex border border-dark">
-                <p>@ticket.RowNum</p>
-                <p>@ticket.SeatNum</p>
-                <p>@ticket.TypeName</p>
-                <p>@ticket.Price</p>
+                <p>@ticket.RowNum - @ticket.SeatNum - @ticket.TypeName - @ticket.Price</p>
             </div>
         }
+        
+        <form asp-controller="Ticket" asp-action="">
+            @{
+                foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
+                {
+                    <input type="hidden" name="SelectedTicketsId" value="@ticket.Id" />
+                }
+            }
+            <label for="CardNumber">Card number</label>
+            <input id="CardNumber" name="CardNumber" type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" 
+                     autocomplete="cc-number" maxlength="19" 
+                     placeholder="xxxx xxxx xxxx xxxx" required>
+            <label for="ExpirationDate">Expiration date</label>
+            <input type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" 
+                   id="ExpirationDate" 
+                   name="ExpirationDate"
+                   required/> 
+            <input type="submit"/>
+        </form>
     }
 </div>

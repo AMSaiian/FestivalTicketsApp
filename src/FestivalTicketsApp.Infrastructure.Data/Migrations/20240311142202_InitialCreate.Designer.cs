@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FestivalTicketsApp.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240229114535_InitialCreate")]
+    [Migration("20240311142202_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -371,10 +371,10 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                     b.Property<int?>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RowNum")
+                    b.Property<int?>("RowNum")
                         .HasColumnType("int");
 
-                    b.Property<int>("SeatNum")
+                    b.Property<int?>("SeatNum")
                         .HasColumnType("int");
 
                     b.Property<int>("TicketStatusId")

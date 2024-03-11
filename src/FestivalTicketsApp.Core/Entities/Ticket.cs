@@ -2,9 +2,9 @@
 
 public class Ticket : BaseEntity
 {
-    public int RowNum { get; set; }
+    public int? RowNum { get; set; }
     
-    public int SeatNum { get; set; }
+    public int? SeatNum { get; set; }
     
     public int TicketTypeId { get; set; }
     

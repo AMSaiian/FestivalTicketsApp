@@ -1,8 +1,8 @@
 ﻿using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Application.HostService.Filters;
 using FestivalTicketsApp.Shared;
-using FestivalTicketsApp.WebUI.Models.HostDetails;
-using FestivalTicketsApp.WebUI.Models.HostList;
+using FestivalTicketsApp.WebUI.Models;
+using FestivalTicketsApp.WebUI.Models.Host;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.Controllers;
@@ -22,7 +22,7 @@ public class HostController(IHostService service) : Controller
         viewModel.CityNames = await _service.GetCities();
         
         HostFilter hostFilter = new(
-            new PagingFilter(),
+            new PagingFilter(RequestDefaults.PageNum, RequestDefaults.PageSize),
             hostTypeId,
             query.CityName);
          

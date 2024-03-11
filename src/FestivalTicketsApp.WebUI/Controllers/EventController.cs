@@ -3,8 +3,7 @@ using FestivalTicketsApp.Application.EventService.Filters;
 using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Shared;
 using FestivalTicketsApp.WebUI.Models;
-using FestivalTicketsApp.WebUI.Models.EventDetails;
-using FestivalTicketsApp.WebUI.Models.EventList;
+using FestivalTicketsApp.WebUI.Models.Event;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.Controllers;
@@ -30,7 +29,7 @@ public class EventController(IEventService eventService, IHostService hostServic
          viewModel.Genres = await _eventService.GetGenres(genreFilter);
          
          EventFilter eventFilter = new(
-             new PagingFilter(), 
+             new PagingFilter(RequestDefaults.PageNum, RequestDefaults.PageSize), 
              query.StartDate, 
              query.EndDate, 
              null, 

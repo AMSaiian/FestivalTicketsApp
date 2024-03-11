@@ -1,4 +1,6 @@
-﻿namespace FestivalTicketsApp.Application.TicketService;
+﻿using FestivalTicketsApp.Application.TicketService.DTO;
+
+namespace FestivalTicketsApp.Application.TicketService;
 
 public interface ITicketService
 {

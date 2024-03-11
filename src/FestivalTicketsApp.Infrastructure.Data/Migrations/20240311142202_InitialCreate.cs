@@ -406,8 +406,8 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RowNum = table.Column<int>(type: "int", nullable: false),
-                    SeatNum = table.Column<int>(type: "int", nullable: false),
+                    RowNum = table.Column<int>(type: "int", nullable: true),
+                    SeatNum = table.Column<int>(type: "int", nullable: true),
                     TicketTypeId = table.Column<int>(type: "int", nullable: false),
                     TicketStatusId = table.Column<int>(type: "int", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: true)

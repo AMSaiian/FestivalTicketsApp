@@ -1,4 +1,5 @@
-﻿using FestivalTicketsApp.Core.Entities;
+﻿using FestivalTicketsApp.Application.TicketService.DTO;
+using FestivalTicketsApp.Core.Entities;
 using FestivalTicketsApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

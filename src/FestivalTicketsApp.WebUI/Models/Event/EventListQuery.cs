@@ -1,4 +1,4 @@
-﻿namespace FestivalTicketsApp.WebUI.Models.EventList;
+﻿namespace FestivalTicketsApp.WebUI.Models.Event;
 
 public class EventListQuery
 {
@@ -8,5 +8,5 @@ public class EventListQuery
     
     public int? GenreId { get; set; }
     
-    public string? CityName { get; set; } = "Kyiv";
+    public string? CityName { get; set; } = RequestDefaults.DefaultCityName;
 }

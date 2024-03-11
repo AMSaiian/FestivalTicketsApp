@@ -368,10 +368,10 @@ namespace FestivalTicketsApp.Infrastructure.Data.Migrations
                     b.Property<int?>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RowNum")
+                    b.Property<int?>("RowNum")
                         .HasColumnType("int");
 
-                    b.Property<int>("SeatNum")
+                    b.Property<int?>("SeatNum")
                         .HasColumnType("int");
 
                     b.Property<int>("TicketStatusId")

@@ -122,12 +122,12 @@ public static class DevelopData
         new() 
         { 
             Name = "Client1", Surname = "SurClient1", 
-            Email = "tempemail1@gmail.com", PhoneNumber = "+38095000001" 
+            Email = "tempemail1@gmail.com", PhoneNumber = "+380950000001" 
         },
         new()
         {
             Name = "Client2", Surname = "SurClient2", 
-            Email = "tempemail2@gmail.com", PhoneNumber = "+38095000002"
+            Email = "tempemail2@gmail.com", PhoneNumber = "+380950000002"
         },
     ];
 
@@ -152,7 +152,7 @@ public static class DevelopData
                     >= 6 and <= 8 => 1,
                     _ => 1
                 };
-                Tickets.Add(new() { RowNum = i, SeatNum = j, TicketStatusId = 1, TicketTypeId = ticketType });
+                Tickets.Add(new() { RowNum = null, SeatNum = null, TicketStatusId = 1, TicketTypeId = ticketType });
             }
         }
 

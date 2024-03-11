@@ -1,6 +1,6 @@
 ﻿using FestivalTicketsApp.Application.HostService.DTO;
 
-namespace FestivalTicketsApp.WebUI.Models.HostDetails;
+namespace FestivalTicketsApp.WebUI.Models.Host;
 
 public class HostDetailsViewModel
 {

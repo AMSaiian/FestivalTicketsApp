@@ -60,8 +60,8 @@ public class EventService(AppDbContext context) : IEventService
         
         Event? eventEntity = await eventsQuery.FirstOrDefaultAsync(e => e.Id == id);
 
-        EventWithDetailsDto? result = new EventWithDetailsDto(
-            eventEntity!.Id,
+        EventWithDetailsDto result = new EventWithDetailsDto(
+            eventEntity.Id,
             eventEntity.Title,
             eventEntity.EventDetails.StartDate,
             eventEntity.HostId,

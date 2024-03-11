@@ -1,6 +1,6 @@
 ﻿using FestivalTicketsApp.Application.EventService.DTO;
 
-namespace FestivalTicketsApp.WebUI.Models.EventList;
+namespace FestivalTicketsApp.WebUI.Models.Event;
 
 public class EventListViewModel
 {

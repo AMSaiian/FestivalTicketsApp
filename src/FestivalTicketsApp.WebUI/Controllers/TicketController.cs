@@ -1,9 +1,8 @@
 ﻿using FestivalTicketsApp.Application.EventService;
 using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Application.TicketService;
-using FestivalTicketsApp.WebUI.Models;
+using FestivalTicketsApp.WebUI.Models.Ticket;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FestivalTicketsApp.WebUI.Controllers;
 

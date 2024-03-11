@@ -1,7 +1,7 @@
 ﻿using FestivalTicketsApp.Application.EventService.DTO;
 using FestivalTicketsApp.Application.HostService.DTO;
 
-namespace FestivalTicketsApp.WebUI.Models.EventDetails;
+namespace FestivalTicketsApp.WebUI.Models.Event;
 
 public class EventDetailsViewModel
 {

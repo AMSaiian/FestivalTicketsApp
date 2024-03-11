@@ -1,7 +1,7 @@
 ﻿using FestivalTicketsApp.Application.HostService.DTO;
-using FestivalTicketsApp.Application.TicketService;
+using FestivalTicketsApp.Application.TicketService.DTO;
 
-namespace FestivalTicketsApp.WebUI.Models;
+namespace FestivalTicketsApp.WebUI.Models.Ticket;
 
 public class TicketSelectionViewModel
 {
