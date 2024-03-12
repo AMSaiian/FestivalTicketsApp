@@ -19,14 +19,14 @@ public class HostController(IHostService service) : Controller
 
         viewModel.QueryState = query;
          
-        viewModel.CityNames = await _service.GetCities();
+        viewModel.CityNames = (await _service.GetCities()).Value;
         
         HostFilter hostFilter = new(
             new PagingFilter(RequestDefaults.PageNum, RequestDefaults.PageSize),
             hostTypeId,
             query.CityName);
          
-        viewModel.Hosts = await _service.GetHosts(hostFilter);
+        viewModel.Hosts = (await _service.GetHosts(hostFilter)).Value;
          
         return View(viewModel);
     }
@@ -37,9 +37,9 @@ public class HostController(IHostService service) : Controller
 
         HostDetailsViewModel viewModel = new();
 
-        viewModel.Host = await _service.GetHostWithDetails(hostId);
+        viewModel.Host = (await _service.GetHostWithDetails(hostId)).Value;
 
-        viewModel.HostedEvents = await _service.GetHostedEvents(hostId);
+        viewModel.HostedEvents = (await _service.GetHostedEvents(hostId)).Value;
 
         return View(viewModel);
     }

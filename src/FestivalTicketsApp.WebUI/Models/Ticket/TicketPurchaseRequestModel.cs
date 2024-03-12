@@ -1,6 +1,6 @@
 ﻿namespace FestivalTicketsApp.WebUI.Models.Ticket;
 
-public class TicketConfirmationRequestModel
+public class TicketPurchaseRequestModel
 {
     public string CardNumber { get; set; }
     

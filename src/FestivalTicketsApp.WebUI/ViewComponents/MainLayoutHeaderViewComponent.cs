@@ -10,7 +10,7 @@ public class MainLayoutHeaderViewComponent(IEventService eventService) : ViewCom
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        List<EventTypeDto> eventTypes = await _eventService.GetEventTypes();
+        List<EventTypeDto> eventTypes = (await _eventService.GetEventTypes()).Value;
 
         return View(eventTypes);
     }

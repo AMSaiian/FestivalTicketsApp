@@ -1,19 +1,20 @@
 ﻿using FestivalTicketsApp.Application.HostService.DTO;
 using FestivalTicketsApp.Application.HostService.Filters;
+using FestivalTicketsApp.Shared;
 
 namespace FestivalTicketsApp.Application.HostService;
 
 public interface IHostService
 {
-    public Task<List<HostDto>> GetHosts(HostFilter filter);
+    public Task<Result<List<HostDto>>> GetHosts(HostFilter filter);
 
-    public Task<HostWithDetailsDto> GetHostWithDetails(int id);
+    public Task<Result<HostWithDetailsDto>> GetHostWithDetails(int id);
 
-    public Task<List<HostedEventDto>> GetHostedEvents(int id);
+    public Task<Result<List<HostedEventDto>>> GetHostedEvents(int id);
     
-    public Task<List<HostTypeDto>> GetHostTypes();
+    public Task<Result<List<HostTypeDto>>> GetHostTypes();
     
-    public Task<List<string>> GetCities();
+    public Task<Result<List<string>>> GetCities();
 
-    public Task<HostHallDetailsDto> GetHostHallDetails(int id);
+    public Task<Result<HostHallDetailsDto>> GetHostHallDetails(int id);
 }

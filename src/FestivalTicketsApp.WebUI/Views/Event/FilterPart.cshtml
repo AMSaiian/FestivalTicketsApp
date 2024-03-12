@@ -1,14 +1,14 @@
 ﻿@model FestivalTicketsApp.WebUI.Models.Event.EventListViewModel
 
 @{
-    List<SelectListItem> genreOptions = Model.Genres!
+    List<SelectListItem> genreOptions = Model.Genres
         .Select(dto => 
             new SelectListItem { Value = dto.Id.ToString(), Text = dto.Name })
         .ToList();
 
     genreOptions.Insert(0, new() { Value = null, Text = "All" });
     
-    List<SelectListItem> cityOptions = Model.CityNames!        
+    List<SelectListItem> cityOptions = Model.CityNames        
         .Select(dto => 
             new SelectListItem { Value = dto, Text = dto })
         .ToList();
@@ -16,10 +16,10 @@
 
 <div>
     <form asp-controller="Event" asp-action="List" method="GET">
-        <input type="date" asp-for="QueryState!.StartDate" />
-        <input type="date" asp-for="QueryState!.EndDate" />
-        <select asp-for="QueryState!.GenreId" asp-items="@genreOptions"></select>
-        <select asp-for="QueryState!.CityName" asp-items="@cityOptions"></select>
+        <input type="date" asp-for="QueryState.StartDate" />
+        <input type="date" asp-for="QueryState.EndDate" />
+        <select asp-for="QueryState.GenreId" asp-items="@genreOptions"></select>
+        <select asp-for="QueryState.CityName" asp-items="@cityOptions"></select>
         <input type="submit" />
     </form>
 </div>

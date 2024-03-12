@@ -2,6 +2,7 @@
 using FestivalTicketsApp.Application.HostService.Filters;
 using FestivalTicketsApp.Core.Entities;
 using FestivalTicketsApp.Infrastructure.Data;
+using FestivalTicketsApp.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace FestivalTicketsApp.Application.HostService;
@@ -10,7 +11,7 @@ public class HostService(AppDbContext context) : IHostService
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<List<HostDto>> GetHosts(HostFilter filter)
+    public async Task<Result<List<HostDto>>> GetHosts(HostFilter filter)
     {
         IQueryable<Host> hostsQuery = _context.Hosts
             .AsNoTracking()
@@ -23,10 +24,13 @@ public class HostService(AppDbContext context) : IHostService
             .Select(h => new HostDto(h.Id, h.Name))
             .ToListAsync();
 
-        return result;
+        if (result.Count == 0)
+            Result<List<HostDto>>.Failure(DomainErrors.QueryEmptyResult);
+
+        return Result<List<HostDto>>.Success(result);
     }
 
-    public async Task<HostWithDetailsDto> GetHostWithDetails(int id)
+    public async Task<Result<HostWithDetailsDto>> GetHostWithDetails(int id)
     {
         IQueryable<Host> hostsQuery = _context.Hosts
             .AsNoTracking()
@@ -35,8 +39,11 @@ public class HostService(AppDbContext context) : IHostService
 
         Host? hostEntity = await hostsQuery.FirstOrDefaultAsync(h => h.Id == id);
 
-        HostWithDetailsDto result = new HostWithDetailsDto(
-            hostEntity.Id,
+        if (hostEntity is null)
+            Result<Result<HostWithDetailsDto>>.Failure(DomainErrors.EntityNotFound);
+
+        HostWithDetailsDto result = new(
+            hostEntity!.Id,
             hostEntity.Name,
             hostEntity.Details.Description,
             new LocationDto(
@@ -47,33 +54,39 @@ public class HostService(AppDbContext context) : IHostService
                 hostEntity.Location.Latitude,
                 hostEntity.Location.Longitude));
         
-        return result;
+        return Result<HostWithDetailsDto>.Success(result);
     }
 
-    public async Task<HostHallDetailsDto> GetHostHallDetails(int id)
+    public async Task<Result<HostHallDetailsDto>> GetHostHallDetails(int id)
     {
-        IQueryable<Host> _hostQuery = _context.Hosts
+        IQueryable<Host> hostQuery = _context.Hosts
             .AsNoTracking()
             .Include(h => h.Details);
 
-        Host? hostEntity = await _hostQuery.FirstOrDefaultAsync(h => h.Id == id);
+        Host? hostEntity = await hostQuery.FirstOrDefaultAsync(h => h.Id == id);
+        
+        if (hostEntity is null)
+            Result<Result<HostWithDetailsDto>>.Failure(DomainErrors.EntityNotFound);
 
-        HostHallDetailsDto result = new HostHallDetailsDto(
-            hostEntity.Id,
+        HostHallDetailsDto result = new(
+            hostEntity!.Id,
             hostEntity.Details.RowAmount,
             hostEntity.Details.SeatsInRow,
             hostEntity.Details.IsDividedBySeats);
 
-        return result;
+        return Result<HostHallDetailsDto>.Success(result);
     }
 
-    public async Task<List<HostedEventDto>> GetHostedEvents(int id)
+    public async Task<Result<List<HostedEventDto>>> GetHostedEvents(int id)
     {
         IQueryable<Host> hostsQuery = _context.Hosts
             .AsNoTracking()
             .Include(h => h.HostedEvents).ThenInclude(e => e.EventDetails);
 
         Host? hostEntity = await hostsQuery.FirstOrDefaultAsync(h => h.Id == id);
+
+        if (hostEntity is null)
+            return Result<List<HostedEventDto>>.Failure(DomainErrors.EntityNotFound);
 
         List<HostedEventDto> result = hostEntity.HostedEvents
             .Select(he =>
@@ -82,11 +95,14 @@ public class HostService(AppDbContext context) : IHostService
                     he.Title,
                     he.EventDetails.StartDate))
             .ToList();
-        
-        return result;
+
+        if (result.Count == 0)
+            return Result<List<HostedEventDto>>.Failure(DomainErrors.QueryEmptyResult);
+
+        return Result<List<HostedEventDto>>.Success(result);
     }
 
-    public async Task<List<HostTypeDto>> GetHostTypes()
+    public async Task<Result<List<HostTypeDto>>> GetHostTypes()
     {
         IQueryable<HostType> hostTypesQuery = _context.HostTypes
             .AsNoTracking();
@@ -95,10 +111,13 @@ public class HostService(AppDbContext context) : IHostService
             .Select(ht => new HostTypeDto(ht.Id, ht.Name))
             .ToListAsync();
 
-        return result;
+        if (result.Count == 0)
+            Result<List<HostTypeDto>>.Failure(DomainErrors.QueryEmptyResult);
+
+        return Result<List<HostTypeDto>>.Success(result);
     }
 
-    public async Task<List<string>> GetCities()
+    public async Task<Result<List<string>>> GetCities()
     {
         IQueryable<Location> locationsQuery = _context.Locations
             .AsNoTracking();
@@ -108,7 +127,10 @@ public class HostService(AppDbContext context) : IHostService
             .Select(cg => cg.Key)
             .ToListAsync();
 
-        return result;
+        if (result.Count == 0)
+            return Result<List<string>>.Failure(DomainErrors.QueryEmptyResult);
+
+        return Result<List<string>>.Success(result);
     }
 
     private Task<IQueryable<Host>> ProcessHostFilter(IQueryable<Host> hostsQuery, HostFilter filter)

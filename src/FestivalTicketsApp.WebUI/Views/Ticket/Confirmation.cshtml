@@ -15,7 +15,7 @@
             </div>
         }
         
-        <form asp-controller="Ticket" asp-action="">
+        <form asp-controller="Ticket" asp-action="Purchase" asp-route-id="@ViewContext.RouteData.Values["id"]">
             @{
                 foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
                 {

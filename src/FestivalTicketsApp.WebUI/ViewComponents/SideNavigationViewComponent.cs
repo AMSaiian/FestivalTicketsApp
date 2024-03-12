@@ -10,7 +10,7 @@ public class SideNavigationViewComponent(IHostService hostService) : ViewCompone
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        List<HostTypeDto> hostTypes = await _hostService.GetHostTypes();
+        List<HostTypeDto> hostTypes = (await _hostService.GetHostTypes()).Value;
 
         return View(hostTypes);
     }

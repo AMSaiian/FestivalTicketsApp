@@ -1,7 +1,7 @@
 ﻿@model FestivalTicketsApp.WebUI.Models.Host.HostListViewModel
 
 @{
-    List<SelectListItem> cityOptions = Model.CityNames!        
+    List<SelectListItem> cityOptions = Model.CityNames        
         .Select(dto => 
             new SelectListItem { Value = dto, Text = dto })
         .ToList();

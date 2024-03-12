@@ -1,4 +1,5 @@
-﻿using FestivalTicketsApp.Application.EventService;
+﻿using System.Security.Claims;
+using FestivalTicketsApp.Application.EventService;
 using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Application.TicketService;
 using FestivalTicketsApp.WebUI.Models.Ticket;
@@ -17,17 +18,21 @@ public class TicketController(
 
     private readonly IEventService _eventService = eventService;
 
+    private static readonly string TicketAvailableStatus = "Available";
+    private static readonly string TicketPurchasedStatus = "Purchased";
+    private static readonly string TicketOutOfDateStatus = "Out of date";
+
     public async Task<IActionResult> Selection(int id)
     {
         int eventId = id;
 
         TicketSelectionViewModel viewModel = new();
 
-        viewModel.Tickets = await _ticketService.GetEventTickets(eventId);
+        viewModel.Tickets = (await _ticketService.GetEventTickets(eventId)).Value;
 
-        viewModel.TicketTypes = await _ticketService.GetEventTicketTypes(eventId);
+        viewModel.TicketTypes = (await _ticketService.GetEventTicketTypes(eventId)).Value;
 
-        viewModel.HallDetails = await _hostService.GetHostHallDetails(eventId);
+        viewModel.HallDetails = (await _hostService.GetHostHallDetails(eventId)).Value;
 
         return View(viewModel);
     }
@@ -39,9 +44,28 @@ public class TicketController(
 
         TicketConfirmationViewModel viewModel = new();
 
-        viewModel.SelectedTickets = await _ticketService.GetTicketsWithPriceById(tickets);
+        viewModel.SelectedTickets = (await _ticketService.GetTicketsWithPriceById(tickets)).Value;
 
-        viewModel.Event = await _eventService.GetEventById(eventId);
+        viewModel.Event = (await _eventService.GetEventById(eventId)).Value;
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Purchase(int id, TicketPurchaseRequestModel purchaseInfo)
+    {
+        int eventId = id;
+        
+        TicketPurchaseResultViewModel viewModel = new();
+
+        int? userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        viewModel.EventId = eventId;
+
+        viewModel.IsSucceeded = (await _ticketService.ChangeEventTicketsStatus(
+            TicketPurchasedStatus,
+            purchaseInfo.SelectedTicketsId,
+            userId)).IsSuccess;
 
         return View(viewModel);
     }

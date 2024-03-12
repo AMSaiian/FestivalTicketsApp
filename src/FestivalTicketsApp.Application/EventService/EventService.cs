@@ -2,6 +2,7 @@
 using FestivalTicketsApp.Application.EventService.Filters;
 using FestivalTicketsApp.Core.Entities;
 using FestivalTicketsApp.Infrastructure.Data;
+using FestivalTicketsApp.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace FestivalTicketsApp.Application.EventService;
@@ -10,12 +11,13 @@ public class EventService(AppDbContext context) : IEventService
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<List<EventDto>> GetEvents(EventFilter filter)
+    public async Task<Result<List<EventDto>>> GetEvents(EventFilter filter)
     {
         IQueryable<Event> eventsQuery = _context.Events
                 .AsNoTracking()
                 .Include(e => e.EventDetails)
-                .Include(e => e.EventGenre).ThenInclude(eg => eg.EventType)
+                .Include(e => e.EventGenre)
+                .ThenInclude(eg => eg.EventType)
                 .Include(e => e.EventStatus);
 
         eventsQuery = await ProcessEventFilter(eventsQuery, filter);
@@ -26,10 +28,13 @@ public class EventService(AppDbContext context) : IEventService
                 new EventDto(e.Id, e.Title, e.EventDetails.StartDate, e.Host.Name))
             .ToListAsync();
 
-        return result;
+        if (result.Count == 0)
+            return Result<List<EventDto>>.Failure(DomainErrors.QueryEmptyResult);
+        
+        return Result<List<EventDto>>.Success(result);
     }
 
-    public async Task<EventDto> GetEventById(int id)
+    public async Task<Result<EventDto>> GetEventById(int id)
     {
         IQueryable<Event> eventQuery = _context.Events
             .AsNoTracking()
@@ -38,20 +43,19 @@ public class EventService(AppDbContext context) : IEventService
 
         Event? eventEntity = await eventQuery.FirstOrDefaultAsync(e => e.Id == id);
         
-        // Future error handling
         if (eventEntity is null)
-            return new EventDto(default, default, default, default);
+            return Result<EventDto>.Failure(DomainErrors.EntityNotFound);
 
-        EventDto result = new EventDto(
+        EventDto result = new(
             eventEntity.Id,
             eventEntity.Title,
             eventEntity.EventDetails.StartDate,
             eventEntity.Host.Name);
 
-        return result;
+        return Result<EventDto>.Success(result);
     }
 
-    public async Task<EventWithDetailsDto> GetEventWithDetails(int id)
+    public async Task<Result<EventWithDetailsDto>> GetEventWithDetails(int id)
     {
         IQueryable<Event> eventsQuery = _context.Events
             .AsNoTracking()
@@ -60,7 +64,10 @@ public class EventService(AppDbContext context) : IEventService
         
         Event? eventEntity = await eventsQuery.FirstOrDefaultAsync(e => e.Id == id);
 
-        EventWithDetailsDto result = new EventWithDetailsDto(
+        if (eventEntity is null)
+            return Result<EventWithDetailsDto>.Failure(DomainErrors.EntityNotFound);
+
+        EventWithDetailsDto result = new(
             eventEntity.Id,
             eventEntity.Title,
             eventEntity.EventDetails.StartDate,
@@ -69,25 +76,34 @@ public class EventService(AppDbContext context) : IEventService
             eventEntity.EventDetails.Description,
             eventEntity.EventDetails.Duration);
 
-        return result;
+        return Result<EventWithDetailsDto>.Success(result);
     }
 
-    public async Task<List<GenreDto>> GetGenres(GenreFilter filter)
+    public async Task<Result<List<GenreDto>>> GetGenres(int eventTypeId)
     {
         IQueryable<EventGenre> genresQuery = _context.EventGenres
                 .AsNoTracking();
 
-        genresQuery = await ProcessGenreFilter(genresQuery, filter);
+        bool isEventTypeExist = await _context.EventTypes.AnyAsync(et => et.Id == eventTypeId);
+        if (!isEventTypeExist)
+            return Result<List<GenreDto>>.Failure(DomainErrors.RelatedEntityNotFound);
+        
+        genresQuery = genresQuery
+            .Where(g => g.EventTypeId == eventTypeId)
+            .OrderBy(g => g.Id);
 
         List<GenreDto> result = await genresQuery
             .Select(g =>
                 new GenreDto(g.Id, g.Genre))
             .ToListAsync();
 
-        return result;
+        if (result.Count == 0)
+            return Result<List<GenreDto>>.Failure(DomainErrors.QueryEmptyResult);
+
+        return Result<List<GenreDto>>.Success(result);
     }
 
-    public async Task<List<EventTypeDto>> GetEventTypes()
+    public async Task<Result<List<EventTypeDto>>> GetEventTypes()
     {
         IQueryable<EventType> eventTypeQuery = _context.EventTypes
                 .AsNoTracking();
@@ -97,7 +113,10 @@ public class EventService(AppDbContext context) : IEventService
                 new EventTypeDto(et.Id, et.Name))
             .ToListAsync();
 
-        return result;
+        if (result.Count == 0)
+            return Result<List<EventTypeDto>>.Failure(DomainErrors.QueryEmptyResult);
+
+        return Result<List<EventTypeDto>>.Success(result);
     }
 
     private Task<IQueryable<Event>> ProcessEventFilter(
@@ -129,17 +148,7 @@ public class EventService(AppDbContext context) : IEventService
             int skipValues = (filter.Pagination.PageNum - 1) * filter.Pagination.PageSize;
             eventsQuery = eventsQuery.Skip(skipValues).Take(filter.Pagination.PageSize);
         }
-
-
+        
         return Task.FromResult(eventsQuery);
-    }
-
-    private Task<IQueryable<EventGenre>> ProcessGenreFilter(IQueryable<EventGenre> genresQuery, GenreFilter filter)
-    {
-        genresQuery = genresQuery
-            .Where(g => g.EventTypeId == filter.EventTypeId)
-            .OrderBy(g => g.Id);
-
-        return Task.FromResult(genresQuery);
     }
 }

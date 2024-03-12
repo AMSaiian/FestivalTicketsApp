@@ -1,17 +1,18 @@
 ﻿using FestivalTicketsApp.Application.EventService.DTO;
 using FestivalTicketsApp.Application.EventService.Filters;
+using FestivalTicketsApp.Shared;
 
 namespace FestivalTicketsApp.Application.EventService;
 
 public interface IEventService
 {
-    public Task<List<EventDto>> GetEvents(EventFilter filter);
+    public Task<Result<List<EventDto>>> GetEvents(EventFilter filter);
     
-    public Task<EventDto> GetEventById(int id);
+    public Task<Result<EventDto>> GetEventById(int id);
 
-    public Task<EventWithDetailsDto> GetEventWithDetails(int id);
+    public Task<Result<EventWithDetailsDto>> GetEventWithDetails(int id);
 
-    public Task<List<GenreDto>> GetGenres(GenreFilter filter);
+    public Task<Result<List<GenreDto>>> GetGenres(int eventTypeId);
 
-    public Task<List<EventTypeDto>> GetEventTypes();
+    public Task<Result<List<EventTypeDto>>> GetEventTypes();
 }

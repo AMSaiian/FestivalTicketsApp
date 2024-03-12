@@ -8,5 +8,9 @@ public class EventListQuery
     
     public int? GenreId { get; set; }
     
-    public string? CityName { get; set; } = RequestDefaults.DefaultCityName;
+    public string CityName { get; set; } = RequestDefaults.DefaultCityName;
+
+    public int PageNum { get; set; } = RequestDefaults.PageNum;
+
+    public int PageSize { get; set; } = RequestDefaults.PageSize;
 }

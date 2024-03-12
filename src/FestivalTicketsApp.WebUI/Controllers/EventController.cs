@@ -1,4 +1,5 @@
 ﻿using FestivalTicketsApp.Application.EventService;
+using FestivalTicketsApp.Application.EventService.DTO;
 using FestivalTicketsApp.Application.EventService.Filters;
 using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Shared;
@@ -22,22 +23,22 @@ public class EventController(IEventService eventService, IHostService hostServic
 
          viewModel.QueryState = query;
          
-         viewModel.CityNames = await _hostService.GetCities();
+         viewModel.CityNames = (await _hostService.GetCities()).Value;
          
-         GenreFilter genreFilter = new(eventTypeId);
+         viewModel.Genres = (await _eventService.GetGenres(eventTypeId)).Value;
          
-         viewModel.Genres = await _eventService.GetGenres(genreFilter);
-         
-         EventFilter eventFilter = new(
-             new PagingFilter(RequestDefaults.PageNum, RequestDefaults.PageSize), 
+         EventFilter eventFilter = new
+         (
+             new PagingFilter(query.PageNum, query.PageSize), 
              query.StartDate, 
              query.EndDate, 
              null, 
              eventTypeId, 
              query.GenreId, 
-             query.CityName);
+             query.CityName
+         );
          
-         viewModel.Events = await _eventService.GetEvents(eventFilter);
+         viewModel.Events = (await _eventService.GetEvents(eventFilter)).Value;
          
          return View(viewModel);
     }
@@ -48,11 +49,11 @@ public class EventController(IEventService eventService, IHostService hostServic
 
         EventDetailsViewModel viewModel = new();
 
-        viewModel.Event = await _eventService.GetEventWithDetails(eventId);
+        viewModel.Event = (await _eventService.GetEventWithDetails(eventId)).Value;
 
         int hostId = viewModel.Event.HostId;
 
-        viewModel.HostedEvents = await _hostService.GetHostedEvents(hostId);
+        viewModel.HostedEvents = (await _hostService.GetHostedEvents(hostId)).Value;
 
         return View(viewModel);
     }
