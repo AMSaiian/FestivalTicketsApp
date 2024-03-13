@@ -6,7 +6,7 @@ namespace FestivalTicketsApp.Application.HostService;
 
 public interface IHostService
 {
-    public Task<Result<List<HostDto>>> GetHosts(HostFilter filter);
+    public Task<Result<Paginated<HostDto>>> GetHosts(HostFilter filter);
 
     public Task<Result<HostWithDetailsDto>> GetHostWithDetails(int id);
 

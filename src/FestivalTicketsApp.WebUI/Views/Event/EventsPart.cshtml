@@ -1,17 +1,107 @@
 ﻿@model List<FestivalTicketsApp.Application.EventService.DTO.EventDto>
 
-<div>
-    @{
-        foreach (var eventDto in Model)
-        {
-            <div class="border border-dark">
-                <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
-                    <p>@eventDto.Title</p>
-                    <p>@eventDto.HostName</p>
-                    <p>@eventDto.StartDate</p>
-                </a>
-            </div>
-
+<div class="container">
+    <div class="row row-cols-3 gy-3 mb-3"> 
+        @{
+            foreach (var eventDto in Model)
+            {
+                // Improvised dummy data to test css
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+                
+                <div class="col border border-dark">
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@eventDto.Id">
+                        <p>@eventDto.Title</p>
+                        <p>@eventDto.HostName</p>
+                        <p>@eventDto.StartDate</p>
+                    </a>
+                </div>
+            }
         }
-    }
+    </div>
 </div>

@@ -14,13 +14,21 @@
         .ToList();
 }
 
-<div>
+<div class="container mt-1 mb-3">
     <form asp-controller="Event" asp-action="List" method="GET">
-        <input type="date" asp-for="QueryState.StartDate" />
-        <input type="date" asp-for="QueryState.EndDate" />
-        <select asp-for="QueryState.GenreId" asp-items="@genreOptions"></select>
-        <select asp-for="QueryState.CityName" asp-items="@cityOptions"></select>
-        <input type="submit" />
+        <div class="row">
+            <label asp-for="QueryState.StartDate" class="col-3 text-center">Start Date</label>
+            <label asp-for="QueryState.EndDate" class="col-3 text-center">End Date</label>
+            <label asp-for="QueryState.GenreId" class="col-2 text-center">Genre name</label>
+            <label asp-for="QueryState.CityName" class="col-2 text-center">City</label>   
+        </div>
+        <div class="row">
+            <input type="date" asp-for="QueryState.StartDate" class="col-3"/>
+            <input type="date" asp-for="QueryState.EndDate" class="col-3"/>
+            <select asp-for="QueryState.GenreId" asp-items="@genreOptions" class="col-2"></select>
+            <select asp-for="QueryState.CityName" asp-items="@cityOptions" class="col-2"></select>
+            <input type="submit" class="col-2"/>
+        </div>
     </form>
 </div>
 

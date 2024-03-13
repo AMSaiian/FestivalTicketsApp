@@ -1,5 +1,7 @@
 html {
   font-size: 14px;
+  position: relative;
+  height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -12,11 +14,23 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+header, footer {
+  background-color: #3b945E;
 }
 
-body {
-  margin-bottom: 60px;
+footer p {
+  color: white;
+}
+
+#sideNav {
+  background-color: #57BA98;
+}
+
+.nav-link {
+  text-align: center;
+  color: white;
+}
+
+.nav-link:focus, .nav-link:hover {
+  color: wheat;
 }

@@ -26,12 +26,12 @@ public class HostController(IHostService service) : Controller
             hostTypeId,
             query.CityName);
          
-        viewModel.Hosts = (await _service.GetHosts(hostFilter)).Value;
+        viewModel.Hosts = (await _service.GetHosts(hostFilter)).Value.Value;
          
         return View(viewModel);
     }
 
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> Details(int id)    
     {
         int hostId = id;
 

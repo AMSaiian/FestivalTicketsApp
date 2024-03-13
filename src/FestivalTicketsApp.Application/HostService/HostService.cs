@@ -11,23 +11,30 @@ public class HostService(AppDbContext context) : IHostService
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<Result<List<HostDto>>> GetHosts(HostFilter filter)
+    public async Task<Result<Paginated<HostDto>>> GetHosts(HostFilter filter)
     {
         IQueryable<Host> hostsQuery = _context.Hosts
             .AsNoTracking()
             .Include(h => h.Location)
             .Include(h => h.HostType);
 
-        hostsQuery = await ProcessHostFilter(hostsQuery, filter);
+        int nextPagesAmount = 0;
 
-        List<HostDto> result = await hostsQuery
+        hostsQuery = await ProcessHostFilter(hostsQuery, filter, ref nextPagesAmount);
+
+        List<HostDto> values = await hostsQuery
             .Select(h => new HostDto(h.Id, h.Name))
             .ToListAsync();
 
-        if (result.Count == 0)
-            Result<List<HostDto>>.Failure(DomainErrors.QueryEmptyResult);
+        if (values.Count == 0)
+            Result<Paginated<HostDto>>.Failure(DomainErrors.QueryEmptyResult);
 
-        return Result<List<HostDto>>.Success(result);
+        Paginated<HostDto> result = new(
+            values,
+            filter.Pagination?.PageNum ?? 1,
+            nextPagesAmount);
+
+        return Result<Paginated<HostDto>>.Success(result);
     }
 
     public async Task<Result<HostWithDetailsDto>> GetHostWithDetails(int id)
@@ -133,7 +140,10 @@ public class HostService(AppDbContext context) : IHostService
         return Result<List<string>>.Success(result);
     }
 
-    private Task<IQueryable<Host>> ProcessHostFilter(IQueryable<Host> hostsQuery, HostFilter filter)
+    private Task<IQueryable<Host>> ProcessHostFilter(
+        IQueryable<Host> hostsQuery, 
+        HostFilter filter,
+        ref int nextPagesAmount)
     {
         if (filter.CityName is not null)
             hostsQuery = hostsQuery.Where(h => h.Location.CityName == filter.CityName);
@@ -146,6 +156,10 @@ public class HostService(AppDbContext context) : IHostService
         if (filter.Pagination is not null)
         {
             int skipValues = (filter.Pagination.PageNum - 1) * filter.Pagination.PageSize;
+
+            nextPagesAmount = (int)Math.Ceiling(
+                (double)hostsQuery.Skip(skipValues).Count() / filter.Pagination.PageSize);
+            
             hostsQuery = hostsQuery.Skip(skipValues).Take(filter.Pagination.PageSize);
         }
         

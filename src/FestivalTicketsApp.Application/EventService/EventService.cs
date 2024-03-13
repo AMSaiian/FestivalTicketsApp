@@ -11,7 +11,7 @@ public class EventService(AppDbContext context) : IEventService
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<Result<List<EventDto>>> GetEvents(EventFilter filter)
+    public async Task<Result<Paginated<EventDto>>> GetEvents(EventFilter filter)
     {
         IQueryable<Event> eventsQuery = _context.Events
                 .AsNoTracking()
@@ -20,18 +20,25 @@ public class EventService(AppDbContext context) : IEventService
                 .ThenInclude(eg => eg.EventType)
                 .Include(e => e.EventStatus);
 
-        eventsQuery = await ProcessEventFilter(eventsQuery, filter);
+        int nextPagesAmount = 0;
 
-        List<EventDto> result = await eventsQuery
+        eventsQuery = await ProcessEventFilter(eventsQuery, filter, ref nextPagesAmount);
+
+        List<EventDto> values = await eventsQuery
             .AsNoTracking()
             .Select(e =>
                 new EventDto(e.Id, e.Title, e.EventDetails.StartDate, e.Host.Name))
             .ToListAsync();
 
-        if (result.Count == 0)
-            return Result<List<EventDto>>.Failure(DomainErrors.QueryEmptyResult);
+        if (values.Count == 0)
+            return Result<Paginated<EventDto>>.Failure(DomainErrors.QueryEmptyResult);
+
+        Paginated<EventDto> result = new(
+            values, 
+            filter.Pagination?.PageNum ?? 1, 
+            nextPagesAmount);
         
-        return Result<List<EventDto>>.Success(result);
+        return Result<Paginated<EventDto>>.Success(result);
     }
 
     public async Task<Result<EventDto>> GetEventById(int id)
@@ -121,7 +128,8 @@ public class EventService(AppDbContext context) : IEventService
 
     private Task<IQueryable<Event>> ProcessEventFilter(
         IQueryable<Event> eventsQuery,
-        EventFilter filter)
+        EventFilter filter,
+        ref int nextPagesAmount)
     {
         if (filter.CityName is not null)
             eventsQuery = eventsQuery.Where(e => e.Host.Location.CityName == filter.CityName);
@@ -146,6 +154,10 @@ public class EventService(AppDbContext context) : IEventService
         if (filter.Pagination is not null)
         {
             int skipValues = (filter.Pagination.PageNum - 1) * filter.Pagination.PageSize;
+
+            nextPagesAmount = (int)Math.Ceiling(
+                (double)eventsQuery.Skip(skipValues).Count() / filter.Pagination.PageSize);
+            
             eventsQuery = eventsQuery.Skip(skipValues).Take(filter.Pagination.PageSize);
         }
         

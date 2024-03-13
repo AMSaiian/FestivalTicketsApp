@@ -38,7 +38,7 @@ public class EventController(IEventService eventService, IHostService hostServic
              query.CityName
          );
          
-         viewModel.Events = (await _eventService.GetEvents(eventFilter)).Value;
+         viewModel.Events = (await _eventService.GetEvents(eventFilter)).Value.Value;
          
          return View(viewModel);
     }

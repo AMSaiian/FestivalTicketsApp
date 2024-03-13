@@ -6,7 +6,7 @@ namespace FestivalTicketsApp.Application.EventService;
 
 public interface IEventService
 {
-    public Task<Result<List<EventDto>>> GetEvents(EventFilter filter);
+    public Task<Result<Paginated<EventDto>>> GetEvents(EventFilter filter);
     
     public Task<Result<EventDto>> GetEventById(int id);
 

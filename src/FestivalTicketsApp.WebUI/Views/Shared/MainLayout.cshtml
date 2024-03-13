@@ -13,8 +13,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/FestivalTicketsApp.WebUI.styles.css" asp-append-version="true"/>
     
-    <link rel="stylesheet" href="~/Identity/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="~/Identity/css/site.css" />
     
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -24,20 +22,23 @@
     <script src="~/Identity/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
     <script src="~/Identity/js/site.js" asp-append-version="true"></script>
 </head>
-<body>
-@await Component.InvokeAsync("MainLayoutHeader")
+<body class="d-flex flex-column h-100">
+    <header>
+        @await Component.InvokeAsync("MainLayoutHeader")
+    </header>
+<div class="d-flex flex-grow-1">
+    <nav id="sideNav" class="col-2">
+        @await Component.InvokeAsync("SideNavigation")
+    </nav>
 
-<div class="container d-flex flex-row">
-    @await Component.InvokeAsync("SideNavigation")
-    <main role="main" class="pb-3">
+    <main role="main" class="col-10 flex-grow-1">
         @RenderBody()
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
-    </div>
-</footer>
+    <footer id="sticky-footer" class="flex-shrink-0 py-2 align-content-center">
+        <p class="text-center">Festival tickets apps - Saiian Artur</p>
+    </footer>
 
 @await RenderSectionAsync("Scripts", required: false)
 </body>
