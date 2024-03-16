@@ -101,21 +101,24 @@ public class TicketService(AppDbContext context) : ITicketService
         IQueryable<TicketStatus> ticketStatusesQuery = _context.TicketStatuses
             .AsNoTracking();
 
-        foreach (int ticketId in ticketsId)
+        List<Ticket> ticketEntities = await ticketsQuery
+            .Where(t => ticketsId.Contains(t.Id))
+            .ToListAsync();
+        
+        if (ticketEntities.Count != ticketsId.Count)
+            return Result<object>.Failure(DomainErrors.EntityNotFound);
+
+        TicketStatus? needStatus = await ticketStatusesQuery.FirstOrDefaultAsync(ts => ts.Status == statusName);
+        
+        if (needStatus is null)
+            return Result<object>.Failure(DomainErrors.RelatedEntityNotFound);
+        
+        foreach (Ticket ticketEntity in ticketEntities)
         {
-            Ticket? ticketEntity = await ticketsQuery.FirstOrDefaultAsync(t => t.Id == ticketId);
-
-            if (ticketEntity is null)
-                return Result<object>.Failure(DomainErrors.EntityNotFound);
-
+            
             if (ticketEntity.TicketStatus.Status == statusName)
                 return Result<object>.Failure(DomainErrors.SameTicketStatusSet);
-
-            TicketStatus? needStatus = await ticketStatusesQuery.FirstOrDefaultAsync(ts => ts.Status == statusName);
-
-            if (needStatus is null)
-                return Result<object>.Failure(DomainErrors.RelatedEntityNotFound);
-
+            
             ticketEntity.TicketStatusId = needStatus.Id;
 
             ticketEntity.ClientId = clientId;

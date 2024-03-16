@@ -1,0 +1,32 @@
+﻿@model PaginationModel
+
+@{
+    int previousPagesAmount = Model.CurrentPageNum - 1;
+    int lastPageNum = Model.CurrentPageNum + Model.NextPagesAmount;
+}
+
+<nav aria-label="Page navigation example" class="mt-auto">
+    <ul class="pagination justify-content-center">
+        @{
+            for (int i = 1; i <= previousPagesAmount; i++)
+            {
+                <li class="page-item"><button id="@i" class="page-link">@i</button></li>
+            }
+            <li class="page-item disabled"><button id="@Model.CurrentPageNum" class="page-link" disabled>@Model.CurrentPageNum</button></li>
+            for (int i = Model.CurrentPageNum + 1; i <= lastPageNum; i++)
+            {
+                <li class="page-item"><button id="@i" class="page-link">@i</button></li>
+            }
+        }
+    </ul>
+</nav>
+
+<script>
+    $(document).ready(() => {
+        $('.page-link').click((event) => {
+            let pageNum = $(event.target).attr('id');
+            $('.filterPageNum').val(pageNum);
+            $('.filterForm').submit();
+        });
+    });
+</script>
