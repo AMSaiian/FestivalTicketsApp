@@ -11,4 +11,8 @@ public class EventListViewModel
     public List<EventDto>? Events { get; set; }
     
     public EventListQuery QueryState { get; set; }
+    
+    public int CurrentPageNum { get; set; }
+    
+    public int NextPagesAmount { get; set; }
 }

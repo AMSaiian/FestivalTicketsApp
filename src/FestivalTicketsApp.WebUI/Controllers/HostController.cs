@@ -1,4 +1,5 @@
 ﻿using FestivalTicketsApp.Application.HostService;
+using FestivalTicketsApp.Application.HostService.DTO;
 using FestivalTicketsApp.Application.HostService.Filters;
 using FestivalTicketsApp.Shared;
 using FestivalTicketsApp.WebUI.Models;
@@ -15,18 +16,38 @@ public class HostController(IHostService service) : Controller
     {
         int hostTypeId = id;
         
+        Result<List<string>> getCityNamesResult = await _service.GetCities();
+
+        if (!getCityNamesResult.IsSuccess)
+            throw new RequiredDataNotFoundException();
+        
         HostListViewModel viewModel = new();
 
         viewModel.QueryState = query;
          
-        viewModel.CityNames = (await _service.GetCities()).Value;
+        viewModel.CityNames = getCityNamesResult.Value!;
         
         HostFilter hostFilter = new(
-            new PagingFilter(RequestDefaults.PageNum, RequestDefaults.PageSize),
+            new PagingFilter(query.PageNum, query.PageSize),
             hostTypeId,
             query.CityName);
+
+        Result<Paginated<HostDto>> getHostsResult = await _service.GetHosts(hostFilter);
          
-        viewModel.Hosts = (await _service.GetHosts(hostFilter)).Value.Value;
+        if (getHostsResult.IsSuccess)
+        {
+            viewModel.Hosts = getHostsResult.Value!.Value;
+
+            viewModel.CurrentPageNum = getHostsResult.Value.CurrentPage;
+
+            viewModel.NextPagesAmount = getHostsResult.Value.NextPagesAmount;
+        }
+        else
+        {
+            viewModel.CurrentPageNum = RequestDefaults.PageNum;
+
+            viewModel.NextPagesAmount = RequestDefaults.NextPagesAmount;
+        }
          
         return View(viewModel);
     }
@@ -35,9 +56,14 @@ public class HostController(IHostService service) : Controller
     {
         int hostId = id;
 
+        var getHostResult = await _service.GetHostWithDetails(hostId);
+            
+        if (!getHostResult.IsSuccess)
+            throw new RequiredDataNotFoundException();
+
         HostDetailsViewModel viewModel = new();
 
-        viewModel.Host = (await _service.GetHostWithDetails(hostId)).Value;
+        viewModel.Host = getHostResult.Value!;
 
         viewModel.HostedEvents = (await _service.GetHostedEvents(hostId)).Value;
 

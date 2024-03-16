@@ -1,14 +1,23 @@
-﻿@model List<FestivalTicketsApp.Application.HostService.DTO.HostDto>
+﻿@model List<FestivalTicketsApp.Application.HostService.DTO.HostDto>?
 
-<div>
-    @{
-        foreach (var hostDto in Model)
-        {
-            <div class="border border-dark">
-                <a asp-controller="Host" asp-action="Details" asp-route-id="@hostDto.Id">
-                    <p>@hostDto.Name</p>
-                </a>
-            </div>
-        }
+<div class="container">
+    @if (Model is not null)
+    {
+        <div class="row row-cols-3 gy-3 mb-3">
+            @{
+                foreach (var hostDto in Model)
+                {
+                    <div class="col bg-light">
+                        <a class="text-decoration-none text-black" asp-controller="Host" asp-action="Details" asp-route-id="@hostDto.Id">
+                            <p>@hostDto.Name</p>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center text">No hosts in chosen city :(</p>
     }
 </div>

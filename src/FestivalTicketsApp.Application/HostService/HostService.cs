@@ -27,7 +27,7 @@ public class HostService(AppDbContext context) : IHostService
             .ToListAsync();
 
         if (values.Count == 0)
-            Result<Paginated<HostDto>>.Failure(DomainErrors.QueryEmptyResult);
+            return Result<Paginated<HostDto>>.Failure(DomainErrors.QueryEmptyResult);
 
         Paginated<HostDto> result = new(
             values,
@@ -47,7 +47,7 @@ public class HostService(AppDbContext context) : IHostService
         Host? hostEntity = await hostsQuery.FirstOrDefaultAsync(h => h.Id == id);
 
         if (hostEntity is null)
-            Result<Result<HostWithDetailsDto>>.Failure(DomainErrors.EntityNotFound);
+            return Result<HostWithDetailsDto>.Failure(DomainErrors.EntityNotFound);
 
         HostWithDetailsDto result = new(
             hostEntity!.Id,
@@ -73,7 +73,7 @@ public class HostService(AppDbContext context) : IHostService
         Host? hostEntity = await hostQuery.FirstOrDefaultAsync(h => h.Id == id);
         
         if (hostEntity is null)
-            Result<Result<HostWithDetailsDto>>.Failure(DomainErrors.EntityNotFound);
+            return Result<HostHallDetailsDto>.Failure(DomainErrors.EntityNotFound);
 
         HostHallDetailsDto result = new(
             hostEntity!.Id,
@@ -119,7 +119,7 @@ public class HostService(AppDbContext context) : IHostService
             .ToListAsync();
 
         if (result.Count == 0)
-            Result<List<HostTypeDto>>.Failure(DomainErrors.QueryEmptyResult);
+            return Result<List<HostTypeDto>>.Failure(DomainErrors.QueryEmptyResult);
 
         return Result<List<HostTypeDto>>.Success(result);
     }
@@ -158,7 +158,7 @@ public class HostService(AppDbContext context) : IHostService
             int skipValues = (filter.Pagination.PageNum - 1) * filter.Pagination.PageSize;
 
             nextPagesAmount = (int)Math.Ceiling(
-                (double)hostsQuery.Skip(skipValues).Count() / filter.Pagination.PageSize);
+                (double)hostsQuery.Skip(skipValues + filter.Pagination.PageSize).Count() / filter.Pagination.PageSize);
             
             hostsQuery = hostsQuery.Skip(skipValues).Take(filter.Pagination.PageSize);
         }

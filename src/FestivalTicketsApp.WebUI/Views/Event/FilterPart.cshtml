@@ -15,19 +15,31 @@
 }
 
 <div class="container mt-1 mb-3">
-    <form asp-controller="Event" asp-action="List" method="GET">
+    <form id="eventListQuery" class="filterForm" asp-controller="Event" asp-action="List" method="GET">
+        <div class="row">
+            <p class="text text-start fw-bold">Define filter</p>
+        </div>
         <div class="row">
             <label asp-for="QueryState.StartDate" class="col-3 text-center">Start Date</label>
             <label asp-for="QueryState.EndDate" class="col-3 text-center">End Date</label>
             <label asp-for="QueryState.GenreId" class="col-2 text-center">Genre name</label>
-            <label asp-for="QueryState.CityName" class="col-2 text-center">City</label>   
+            <label asp-for="QueryState.CityName" class="col-2 text-center">City</label>
         </div>
+        <input type="hidden" id="eventListPageNum" class="filterPageNum" asp-for="QueryState.PageNum" value="@Model.QueryState.PageNum">
         <div class="row">
-            <input type="date" asp-for="QueryState.StartDate" class="col-3"/>
-            <input type="date" asp-for="QueryState.EndDate" class="col-3"/>
-            <select asp-for="QueryState.GenreId" asp-items="@genreOptions" class="col-2"></select>
-            <select asp-for="QueryState.CityName" asp-items="@cityOptions" class="col-2"></select>
-            <input type="submit" class="col-2"/>
+            <div class="col-3">
+                <input type="date" asp-for="QueryState.StartDate" class="form-control"/>
+            </div>
+            <div class="col-3">
+                <input type="date" asp-for="QueryState.EndDate" class="form-control"/>
+            </div>
+            <div class="col-2">
+                <select asp-for="QueryState.GenreId" asp-items="@genreOptions" class="form-select"></select>
+            </div>
+            <div class="col-2">
+                <select asp-for="QueryState.CityName" asp-items="@cityOptions" class="form-select"></select>
+            </div>
+            <input type="submit" class="col-2 btn-primary" value="Search"/>
         </div>
     </form>
 </div>
@@ -43,5 +55,9 @@
             var endDate = $(event.target).val();
             $('#QueryState_StartDate').attr('max', endDate);
         });
+    });
+    
+    $('input[type="submit"]').click(() => {
+        $('input[name="QueryState.PageNum"]').val('1');
     });
 </script>

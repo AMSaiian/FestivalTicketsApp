@@ -156,7 +156,7 @@ public class EventService(AppDbContext context) : IEventService
             int skipValues = (filter.Pagination.PageNum - 1) * filter.Pagination.PageSize;
 
             nextPagesAmount = (int)Math.Ceiling(
-                (double)eventsQuery.Skip(skipValues).Count() / filter.Pagination.PageSize);
+                (double)eventsQuery.Skip(skipValues + filter.Pagination.PageSize).Count() / filter.Pagination.PageSize);
             
             eventsQuery = eventsQuery.Skip(skipValues).Take(filter.Pagination.PageSize);
         }

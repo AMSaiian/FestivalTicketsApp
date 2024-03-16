@@ -1,5 +1,6 @@
 ﻿using FestivalTicketsApp.Application.EventService;
 using FestivalTicketsApp.Application.EventService.DTO;
+using FestivalTicketsApp.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.ViewComponents;
@@ -10,7 +11,12 @@ public class MainLayoutHeaderViewComponent(IEventService eventService) : ViewCom
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        List<EventTypeDto> eventTypes = (await _eventService.GetEventTypes()).Value;
+        Result<List<EventTypeDto>> getEventTypesResult = await _eventService.GetEventTypes();
+
+        if (!getEventTypesResult.IsSuccess)
+            throw new RequiredDataNotFoundException();
+                
+        List<EventTypeDto> eventTypes = getEventTypesResult.Value!;
 
         return View(eventTypes);
     }

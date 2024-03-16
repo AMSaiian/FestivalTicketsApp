@@ -145,20 +145,20 @@ public static class DevelopData
         {
             for (int j = 1; j <= HostDetails[0].SeatsInRow; j++)
             {
-                int ticketType = j switch
+                int ticketType = i switch
                 {
-                    >= 1 and < 3 => 3, 
+                    >= 1 and < 3 => 1, 
                     >= 3 and < 5 => 2,
-                    >= 6 and <= 8 => 1,
+                    >= 5 and <= 8 => 3,
                     _ => 1
                 };
-                Tickets.Add(new() { RowNum = null, SeatNum = null, TicketStatusId = 1, TicketTypeId = ticketType });
+                Tickets.Add(new() { RowNum = i, SeatNum = j, TicketStatusId = 1, TicketTypeId = ticketType });
             }
         }
 
         for (int i = 1; i <= HostDetails[1].SeatsInRow; i++)
         {
-            Tickets.Add(new() { RowNum = 1, SeatNum = i, TicketStatusId = 1, TicketTypeId = 4 });
+            Tickets.Add(new() { RowNum = null, SeatNum = null, TicketStatusId = 1, TicketTypeId = 4 });
         }
     }
 

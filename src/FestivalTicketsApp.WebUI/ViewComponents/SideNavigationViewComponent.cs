@@ -1,5 +1,6 @@
 ﻿using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Application.HostService.DTO;
+using FestivalTicketsApp.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.ViewComponents;
@@ -10,7 +11,12 @@ public class SideNavigationViewComponent(IHostService hostService) : ViewCompone
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        List<HostTypeDto> hostTypes = (await _hostService.GetHostTypes()).Value;
+        var getHostTypesResult = await _hostService.GetHostTypes();
+
+        if (!getHostTypesResult.IsSuccess)
+            throw new RequiredDataNotFoundException();
+        
+        List<HostTypeDto> hostTypes = getHostTypesResult.Value!;
 
         return View(hostTypes);
     }

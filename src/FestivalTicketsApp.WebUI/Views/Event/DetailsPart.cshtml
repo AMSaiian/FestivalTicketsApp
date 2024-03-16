@@ -1,10 +1,10 @@
 ﻿@model FestivalTicketsApp.Application.EventService.DTO.EventWithDetailsDto
 
-<div class="border border-dark">
-    <a asp-controller="Host" asp-action="Details" asp-route-id="@Model.HostId">@Model.HostName</a>
-    <p>@Model.StartDate</p>
-    <p>@Model.Duration min</p>
-    <a class="btn-primary" asp-controller="Ticket" asp-action="Selection" asp-route-id="@Model.Id">
+<a asp-controller="Host" asp-action="Details" asp-route-id="@Model.HostId"><i class="fa-solid fa-location-dot mx-2"></i>@Model.HostName</a>
+<p><i class="fas fa-calendar-alt mx-2"></i>@Model.StartDate</p>
+<p><i class="fa-regular fa-clock mx-2"></i>@Model.Duration min</p>
+<button class="btn-primary">
+    <a class="text-decoration-none text-white" asp-controller="Ticket" asp-action="Selection" asp-route-id="@Model.Id">
         Select tickets
     </a>
-</div>
+</button>

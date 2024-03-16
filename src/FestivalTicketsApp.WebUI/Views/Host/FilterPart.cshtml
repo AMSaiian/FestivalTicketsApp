@@ -7,9 +7,26 @@
         .ToList();
 }
 
-<div>
-    <form asp-controller="Host" asp-action="List" method="GET">
-        <select id="cityName" asp-for="QueryState!.CityName" asp-items="@cityOptions"></select>
-        <input type="submit" />
+<div class="container mt-1 mb-3">
+    <form id="hostListQuery" class="filterForm" asp-controller="Host" asp-action="List" method="GET">
+        <div class="row">
+            <p class="text text-start fw-bold">Define filter</p>
+        </div>
+        <div class="row">
+            <label asp-for="QueryState.CityName" class="col-2 text-center">City</label>
+        </div>
+        <input type="hidden" id="hostListPageNum" class="filterPageNum" asp-for="QueryState.PageNum" value="@Model.QueryState.PageNum">
+        <div class="row">
+            <div class="col-2 ">
+                <select asp-for="QueryState.CityName" asp-items="@cityOptions" class="form-select"></select>
+            </div>
+            <input type="submit" class="col-2 btn-primary" value="Search"/>
+        </div>
     </form>
 </div>
+
+<script>
+    $('input[type="submit"]').click(() => {
+        $('input[name="QueryState.PageNum"]').val('1');
+    });
+</script>

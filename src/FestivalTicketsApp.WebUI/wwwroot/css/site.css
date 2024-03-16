@@ -34,3 +34,7 @@ footer p {
 .nav-link:focus, .nav-link:hover {
   color: wheat;
 }
+
+.scene {
+  background: gainsboro;
+}

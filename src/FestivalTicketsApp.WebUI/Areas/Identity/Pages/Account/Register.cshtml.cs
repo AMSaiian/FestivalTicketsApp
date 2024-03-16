@@ -107,6 +107,11 @@ namespace FestivalTicketsApp.WebUI.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                
+                // Temporary
+                user.Name = "Name3";
+                user.Surname = "Surname3";
+                user.PhoneNumber = "+380950000003";
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

@@ -1,27 +1,88 @@
-﻿@model FestivalTicketsApp.WebUI.Models.Ticket.TicketSelectionViewModel
+﻿@using FestivalTicketsApp.Application.TicketService.DTO
+@model FestivalTicketsApp.WebUI.Models.Ticket.TicketSelectionViewModel
 
-<form class="container-fluid" asp-controller="Ticket" asp-action="Confirmation" 
-      asp-route-id="@ViewContext.RouteData.Values["id"]" method="POST">
-    @{
-        var ticket = Model.Tickets.GetEnumerator(); 
-        
-        for (int rowNum = 1; rowNum <= Model.HallDetails.RowAmount; rowNum++)
+@{
+    Dictionary<int, string> colourScheme = getColorScheme(Model.TicketTypes.Select(tt => tt.Id).ToList());
+}
+
+@functions
+{
+    public Dictionary<int, string> getColorScheme(List<int> elementsId)
+    {
+        const float saturation = 100f;
+        const float lightness = 50f;
+        const float endColor = 340f;
+        float currentColor = 0f;
+
+        Dictionary<int, string> colorScheme = new();
+
+        float hueOffset = endColor / elementsId.Count;
+
+        foreach (int ticketId in elementsId)
         {
-            <div class="row">
+            colorScheme.Add(ticketId, Color.FromHsl(currentColor, saturation, lightness).ToRgbHexString());
+            currentColor += hueOffset;
+        }
+
+        return colorScheme;
+    }
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-10">
+            <div class="scene text-center m-2">
+                <h3 class="p-2">Scene</h3>
+            </div>
+
+            <form class="container-fluid" asp-controller="Ticket" asp-action="Confirmation"
+                  asp-route-id="@ViewContext.RouteData.Values["id"]" method="POST">
                 @{
-                    for (int seatNum = 1; seatNum <= Model.HallDetails.SeatsInRow; seatNum++)
+                    var ticket = Model.Tickets.GetEnumerator();
+
+                    for (int rowNum = 1; rowNum <= Model.HallDetails.RowAmount; rowNum++)
                     {
-                        ticket.MoveNext();
-                        <div class="col">
-                            <input type="checkbox" name="tickets" value="@ticket.Current.Id" 
-                                   @if (ticket.Current.Status != "Available") { <text>disabled</text> }>
+                        <div class="row">
+                            <div class="col d-flex justify-content-center align-items-center">
+                                <p class="text-center mb-0">Row @rowNum</p>
+                            </div>
+                            @{
+                                for (int seatNum = 1; seatNum <= Model.HallDetails.SeatsInRow; seatNum++)
+                                {
+                                    ticket.MoveNext();
+                                    <div class="col text-center">
+                                        <p class="mb-1">@seatNum</p>
+                                        <input type="checkbox" name="tickets" value="@ticket.Current.Id" 
+                                               style="outline: 3px solid @colourScheme[ticket.Current.TicketTypeId]"
+                                               @if (ticket.Current.Status != "Available")
+                                               {
+                                                   <text>disabled</text>
+                                               }>
+                                    </div>
+                                }
+                            }
                         </div>
                     }
+
+                    ticket.Dispose();
+                    <button class="btn-primary mt-5" type="submit">Confirm</button>
                 }
-            </div>
-        }
-        
-        ticket.Dispose();
-        <button class="btn-primary" type="submit">Confirm</button>
-    }
-</form>
+            </form>
+        </div>
+        <div class="col-2">
+            <h3 class="my-3">Ticket types</h3>
+            @{
+                foreach (TicketTypeDto ticketType in Model.TicketTypes)
+                {
+                    <div class="row my-1">
+                        <div class="col-10">
+                            <h6 class="text-start mx-2">@ticketType.Name - @ticketType.Price$</h6>
+                        </div>
+                        <div class="col-1" style="background: @colourScheme[ticketType.Id]">
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
