@@ -1,37 +1,50 @@
 ﻿@using FestivalTicketsApp.Application.TicketService.DTO
 @model FestivalTicketsApp.WebUI.Models.Ticket.TicketConfirmationViewModel
 
-<div class="container-fluid">
+<div class="container">
     @{
-        <div class="d-flex border border-dark">
-            <p>@Model.Event.Title</p>
-            <p>@Model.Event.HostName</p>
-            <p>@Model.Event.StartDate</p>
-        </div>
-        foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
-        {
-            <div class="d-flex border border-dark">
-                <p>@ticket.RowNum - @ticket.SeatNum - @ticket.TypeName - @ticket.Price</p>
-            </div>
-        }
-        
-        <form asp-controller="Ticket" asp-action="Purchase" asp-route-id="@ViewContext.RouteData.Values["id"]">
-            @{
-                foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
+        <div class="row">
+            <div class="col-10">
+                <h3>Input pay information</h3>
+                <form asp-controller="Ticket" asp-action="Purchase" asp-route-id="@ViewContext.RouteData.Values["id"]">
+                    @foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
+                    {
+                        <input type="hidden" name="SelectedTicketsId" value="@ticket.Id"/>
+                    }
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="CardNumber">Card number</label>
+                            <input id="CardNumber" class="form-control" name="CardNumber" type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}"
+                                   autocomplete="cc-number" maxlength="19"
+                                   placeholder="xxxx xxxx xxxx xxxx" required>
+                        </div>
+                        <div class="col-4">
+                            <label for="ExpirationDate">Expiration date</label>
+                            <input type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                   id="ExpirationDate"
+                                   class="form-control"
+                                   name="ExpirationDate"
+                                   required/>
+                        </div>
+                        <div class="col-2 text-center my-auto">
+                            <input class="btn-primary" type="submit" value="Purchase"/>
+                        </div>
+                    </div>
+                </form>
+                <h3>Your tickets:</h3>
+                @foreach (TicketWithPriceDto ticket in Model.SelectedTickets)
                 {
-                    <input type="hidden" name="SelectedTicketsId" value="@ticket.Id" />
+                    <div class="bg-light">
+                        <p>Row @ticket.RowNum - Seat @ticket.SeatNum - @ticket.TypeName - @ticket.Price$</p>
+                    </div>
                 }
-            }
-            <label for="CardNumber">Card number</label>
-            <input id="CardNumber" name="CardNumber" type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" 
-                     autocomplete="cc-number" maxlength="19" 
-                     placeholder="xxxx xxxx xxxx xxxx" required>
-            <label for="ExpirationDate">Expiration date</label>
-            <input type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" 
-                   id="ExpirationDate" 
-                   name="ExpirationDate"
-                   required/> 
-            <input type="submit"/>
-        </form>
+            </div>
+            <div class="col-2">
+                <h3>Event details</h3>
+                <p>@Model.Event.Title</p>
+                <p>@Model.Event.HostName</p>
+                <p>@Model.Event.StartDate</p>
+            </div>
+        </div>
     }
 </div>

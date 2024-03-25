@@ -1,4 +1,5 @@
-﻿using FestivalTicketsApp.Application.EventService;
+﻿using FestivalTicketsApp.Application.ClientService;
+using FestivalTicketsApp.Application.EventService;
 using FestivalTicketsApp.Application.HostService;
 using FestivalTicketsApp.Application.TicketService;
 using FestivalTicketsApp.Core.Entities;
@@ -44,6 +45,7 @@ public static class ConfigureServices
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IHostService, HostService>();
         services.AddScoped<ITicketService, TicketService>();
+        services.AddScoped<IClientService, ClientService>();
 
         return services;
     }

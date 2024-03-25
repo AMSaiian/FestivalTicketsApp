@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using FestivalTicketsApp.Application;
 using FestivalTicketsApp.Application.EventService;
 using FestivalTicketsApp.Application.EventService.DTO;
 using FestivalTicketsApp.Application.HostService;
@@ -22,10 +23,6 @@ public class TicketController(
     private readonly IHostService _hostService = hostService;
 
     private readonly IEventService _eventService = eventService;
-
-    private static readonly string TicketAvailableStatus = "Available";
-    private static readonly string TicketPurchasedStatus = "Purchased";
-    private static readonly string TicketOutOfDateStatus = "Out of date";
     
     [Authorize]
     public async Task<IActionResult> Selection(int id)
@@ -34,7 +31,7 @@ public class TicketController(
 
         Result<List<TicketDto>> getTicketsResult = await _ticketService.GetEventTickets(eventId);
         Result<List<TicketTypeDto>> getTicketTypesResult = await _ticketService.GetEventTicketTypes(eventId);
-        Result<HostHallDetailsDto> getHallDetailsResult = await _hostService.GetHostHallDetails(eventId);
+        Result<HostHallDetailsDto> getHallDetailsResult = await _hostService.GetHostHallDetailsWithEventId(eventId);
 
         if (!getTicketsResult.IsSuccess 
          || !getTicketTypesResult.IsSuccess 
@@ -86,7 +83,7 @@ public class TicketController(
         viewModel.EventId = eventId;
 
         viewModel.IsSucceeded = (await _ticketService.ChangeEventTicketsStatus(
-            TicketPurchasedStatus,
+            ServicesEnums.TicketPurchasedStatus,
             purchaseInfo.SelectedTicketsId,
             userId)).IsSuccess;
 

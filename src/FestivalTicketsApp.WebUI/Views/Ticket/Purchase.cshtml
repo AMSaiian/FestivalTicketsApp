@@ -1,11 +1,13 @@
 ﻿@model FestivalTicketsApp.WebUI.Models.Ticket.TicketPurchaseResultViewModel
 
-@if (Model.IsSucceeded)
-{
-    <p>Ticket purchased successfully</p>
-}
-else 
-{
-    <p>Some tickets in your list is already unavailable. Try later</p> 
-    <a asp-controller="Ticket" asp-action="Selection" asp-route-id="@Model.EventId">Return to selection</a>
-}
+<div class="container h-100 d-flex justify-content-center align-items-center flex-column">
+    @if (Model.IsSucceeded)
+    {
+        <p class="m-auto">Ticket purchased successfully</p>
+    }
+    else 
+    {
+        <p>Some tickets in your list is already unavailable. Try later</p> 
+        <a asp-controller="Ticket" asp-action="Selection" asp-route-id="@Model.EventId">Return to selection</a>
+    }
+</div>

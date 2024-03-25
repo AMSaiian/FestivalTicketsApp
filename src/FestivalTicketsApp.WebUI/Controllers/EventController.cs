@@ -1,4 +1,6 @@
-﻿using FestivalTicketsApp.Application;
+﻿using System.Security.Claims;
+using FestivalTicketsApp.Application;
+using FestivalTicketsApp.Application.ClientService;
 using FestivalTicketsApp.Application.EventService;
 using FestivalTicketsApp.Application.EventService.DTO;
 using FestivalTicketsApp.Application.EventService.Filters;
@@ -11,14 +13,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalTicketsApp.WebUI.Controllers;
 
-public class EventController(IEventService eventService, IHostService hostService) : Controller
+public class EventController(IEventService eventService, 
+                             IHostService hostService, 
+                             IClientService clientService) 
+    : Controller
 {
     private readonly IEventService _eventService = eventService;
 
     private readonly IHostService _hostService = hostService;
+
+    private readonly IClientService _clientService = clientService;
     
     public async Task<IActionResult> List(int id, [FromQuery, Bind(Prefix = "QueryState")] EventListQuery query)
-     {
+    {
          int eventTypeId = id;
          
          Result<List<string>> getCityNamesResult = await _hostService.GetCities();
@@ -77,6 +84,17 @@ public class EventController(IEventService eventService, IHostService hostServic
             throw new RequiredDataNotFoundException();
         
         EventDetailsViewModel viewModel = new();
+        
+        string? userIdRaw = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdRaw is not null 
+          && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+        {
+            Result<bool> isInFavourite = await _clientService.IsInFavourite(eventId, userId);
+
+            if (isInFavourite.IsSuccess)
+                viewModel.IsInFavourite = isInFavourite.Value;
+        }
+        
         viewModel.Event = getEventResult.Value!;
         
         Result<List<HostedEventDto>> getHostedEventsResult = 

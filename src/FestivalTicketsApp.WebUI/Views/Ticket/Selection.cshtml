@@ -1,4 +1,5 @@
 ﻿@using FestivalTicketsApp.Application.TicketService.DTO
+@using FestivalTicketsApp.Application
 @model FestivalTicketsApp.WebUI.Models.Ticket.TicketSelectionViewModel
 
 @{
@@ -28,16 +29,39 @@
     }
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-10">
+<div class="container d-flex flex-column h-100">
+    <div class="row d-flex flex-row h-100">
+        <div class="col-10 d-flex flex-column h-100">
             <div class="scene text-center m-2">
                 <h3 class="p-2">Scene</h3>
             </div>
+            
+            @if (!Model.HallDetails.isDivideBySeats) 
+            {
+                Model.Tickets.RemoveAll(t => t.Status != ServicesEnums.TicketAvailableStatus);
+                <div class="fan-zone text-center mt-auto mb-auto mx-2 d-flex flex-column h-50">
+                    <h3 class="mt-auto mb-auto p-2">Fan zone</h3>
+                    @if (Model.Tickets.Count > 0)
+                    {
+                        <h5 class="text-center">Selected ticket amount:</h5>
+                        <input type="range" min="0" max="@Model.Tickets.Count"
+                               value="0"
+                               class="mx-auto w-50"
+                               id="ticketsAmount"
+                               oninput="this.nextElementSibling.value = this.value"/>
+                        <output class="mb-auto">0</output>
+                    }
+                    else
+                    {
+                        <h6 class="text-center mb-auto">Tickets sold out</h6>
+                    }
+                </div>
+            }
 
-            <form class="container-fluid" asp-controller="Ticket" asp-action="Confirmation"
+            <form class="container-fluid mb-auto" asp-controller="Ticket" asp-action="Confirmation"
                   asp-route-id="@ViewContext.RouteData.Values["id"]" method="POST">
-                @{
+                @if (Model.HallDetails.isDivideBySeats)
+                {
                     var ticket = Model.Tickets.GetEnumerator();
 
                     for (int rowNum = 1; rowNum <= Model.HallDetails.RowAmount; rowNum++)
@@ -52,9 +76,9 @@
                                     ticket.MoveNext();
                                     <div class="col text-center">
                                         <p class="mb-1">@seatNum</p>
-                                        <input type="checkbox" name="tickets" value="@ticket.Current.Id" 
+                                        <input type="checkbox" class="ticketCheckBoxes" name="tickets" value="@ticket.Current.Id"
                                                style="outline: 3px solid @colourScheme[ticket.Current.TicketTypeId]"
-                                               @if (ticket.Current.Status != "Available")
+                                               @if (ticket.Current.Status != ServicesEnums.TicketAvailableStatus)
                                                {
                                                    <text>disabled</text>
                                                }>
@@ -65,8 +89,15 @@
                     }
 
                     ticket.Dispose();
-                    <button class="btn-primary mt-5" type="submit">Confirm</button>
                 }
+                else
+                {
+                    foreach (TicketDto ticket in Model.Tickets)
+                    {
+                        <input type="checkbox" class="ticketCheckBoxes" name="tickets" value="@ticket.Id" hidden/>
+                    }
+                }
+                <button id="submitSelectionBtn" class="btn-secondary mt-3" type="submit" disabled>Confirm</button>
             </form>
         </div>
         <div class="col-2">
@@ -86,3 +117,41 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(() => {
+        $('#ticketsAmount').change(() => {
+            const ticketCheckBoxes = $('.ticketCheckBoxes');
+            ticketCheckBoxes.prop('checked', false);
+            
+            const ticketsAmountToCheck = $('#ticketsAmount').val();
+            ticketCheckBoxes.sort(() => Math.random() - 0.5)
+            .slice(0, ticketsAmountToCheck)
+            .prop('checked', true);
+            
+            if ($('.ticketCheckBoxes:checked').length > 0) {
+                $('#submitSelectionBtn').prop('disabled', false)
+                .removeClass('btn-secondary')
+                .addClass('btn-primary');
+            } else {
+                $('#submitSelectionBtn').prop('disabled', true)
+                .removeClass('btn-primary')
+                .addClass('btn-secondary');
+            }
+        })
+    }) 
+
+    $(document).ready(() => {
+        $('.ticketCheckBoxes').change(() => {
+            if ($('.ticketCheckBoxes:checked').length > 0) {
+                $('#submitSelectionBtn').prop('disabled', false)
+                .removeClass('btn-secondary')
+                .addClass('btn-primary');
+            } else {
+                $('#submitSelectionBtn').prop('disabled', true)
+                .removeClass('btn-primary')
+                .addClass('btn-secondary');
+            }
+        });
+    });
+</script>

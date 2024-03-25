@@ -9,7 +9,6 @@ namespace FestivalTicketsApp.Application.TicketService;
 public class TicketService(AppDbContext context) : ITicketService
 {
     private readonly AppDbContext _context = context;
-
     public async Task<Result<List<TicketDto>>> GetEventTickets(int eventId)
     {
         bool isEventExist = await _context.Events.AnyAsync(e => e.Id == eventId);
@@ -92,7 +91,6 @@ public class TicketService(AppDbContext context) : ITicketService
 
         return Result<List<TicketTypeDto>>.Success(result);
     }
-
     public async Task<Result<object>> ChangeEventTicketsStatus(string statusName, List<int> ticketsId, int? clientId)
     {
         IQueryable<Ticket> ticketsQuery = _context.Tickets
@@ -115,17 +113,38 @@ public class TicketService(AppDbContext context) : ITicketService
         
         foreach (Ticket ticketEntity in ticketEntities)
         {
-            
-            if (ticketEntity.TicketStatus.Status == statusName)
-                return Result<object>.Failure(DomainErrors.SameTicketStatusSet);
-            
-            ticketEntity.TicketStatusId = needStatus.Id;
+            Result<object>? intermediateResult = await ProcessStatusChange(ticketEntity, needStatus, clientId);
 
-            ticketEntity.ClientId = clientId;
+            if (intermediateResult is not null)
+                return intermediateResult;
         }
 
         await _context.SaveChangesAsync();
         
         return Result<object>.Success(null);
+    }
+
+    private Task<Result<object>?> ProcessStatusChange(Ticket ticketEntity, TicketStatus nextStatus, int? clientId)
+    {
+        if (ticketEntity.TicketStatus.Status == ServicesEnums.TicketPurchasedStatus 
+          && nextStatus.Status == ServicesEnums.TicketPurchasedStatus 
+          && clientId is not null)
+            return Task.FromResult<Result<object>?>(Result<object>.Failure(DomainErrors.SoldTicketCantBeSoldAgain));
+        
+        if (nextStatus.Status == ServicesEnums.TicketPurchasedStatus 
+         && clientId is null)
+            return Task.FromResult<Result<object>?>(Result<object>.Failure(DomainErrors.AnonymousTicketBuy));
+
+        if (nextStatus.Status == ServicesEnums.TicketOutOfDateStatus)
+            return Task.FromResult<Result<object>?>(Result<object>.Failure(DomainErrors.OutOfDateTicketStatusCantBeChanged));
+
+        if (ticketEntity.TicketStatus.Status == nextStatus.Status)
+            return Task.FromResult<Result<object>?>(Result<object>.Failure(DomainErrors.SameTicketStatusSet));
+
+        ticketEntity.TicketStatusId = nextStatus.Id;
+
+        ticketEntity.ClientId = clientId;
+
+        return Task.FromResult<Result<object>?>(null);
     }
 }

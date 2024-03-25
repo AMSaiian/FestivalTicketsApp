@@ -64,6 +64,30 @@ public class HostService(AppDbContext context) : IHostService
         return Result<HostWithDetailsDto>.Success(result);
     }
 
+    public async Task<Result<HostHallDetailsDto>> GetHostHallDetailsWithEventId(int eventId)
+    {
+        IQueryable<Event> eventQuery = _context.Events
+            .Include(e => e.Host)
+            .ThenInclude(h => h.Details)
+            .AsNoTracking();
+
+        Event? eventEntity = await eventQuery.FirstOrDefaultAsync(e => e.Id == eventId);
+    
+        if (eventEntity is null)
+            return Result<HostHallDetailsDto>.Failure(DomainErrors.RelatedEntityNotFound);
+
+        if (eventEntity?.Host?.Details is null)
+            return Result<HostHallDetailsDto>.Failure(DomainErrors.EntityNotFound);
+        
+        HostHallDetailsDto result = new(
+            eventEntity.Host!.Id,
+            eventEntity.Host.Details.RowAmount,
+            eventEntity.Host.Details.SeatsInRow,
+            eventEntity.Host.Details.IsDividedBySeats);
+
+        return Result<HostHallDetailsDto>.Success(result);
+    }
+    
     public async Task<Result<HostHallDetailsDto>> GetHostHallDetails(int id)
     {
         IQueryable<Host> hostQuery = _context.Hosts

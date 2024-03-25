@@ -17,4 +17,6 @@ public interface IHostService
     public Task<Result<List<string>>> GetCities();
 
     public Task<Result<HostHallDetailsDto>> GetHostHallDetails(int id);
+
+    public Task<Result<HostHallDetailsDto>> GetHostHallDetailsWithEventId(int eventId);
 }

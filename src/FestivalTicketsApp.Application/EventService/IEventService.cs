@@ -15,4 +15,6 @@ public interface IEventService
     public Task<Result<List<GenreDto>>> GetGenres(int eventTypeId);
 
     public Task<Result<List<EventTypeDto>>> GetEventTypes();
+
+    public Task<Result<object>> PlaneEvent(PlaneEventDto caseContext);
 }

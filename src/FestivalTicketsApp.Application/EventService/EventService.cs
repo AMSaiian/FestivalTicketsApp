@@ -126,6 +126,102 @@ public class EventService(AppDbContext context) : IEventService
         return Result<List<EventTypeDto>>.Success(result);
     }
 
+    public async Task<Result<object>> PlaneEvent(PlaneEventDto caseContext)
+    {
+        (Result<object>?, Event?) createEventResult = await CreateEvent(caseContext);
+        
+        Result<object> result = createEventResult.Item1 ?? 
+                                await CreateEventTickets(caseContext, createEventResult.Item2!) ?? 
+                                Result<object>.Success(null);
+        
+        if (result.IsSuccess)
+            await _context.SaveChangesAsync();
+
+        return result;
+    }
+
+    private async Task<(Result<object>?, Event?)> CreateEvent(PlaneEventDto caseContext)
+    {
+        EventStatus? plannedStatusEntity = await _context.EventStatuses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(es => es.Status == ServicesEnums.PlannedEventStatus);
+
+        bool isHostExist = await _context.Hosts.AnyAsync(h => h.Id == caseContext.HostId);
+        
+        if (plannedStatusEntity is null || !isHostExist)
+            return (Result<object>.Failure(DomainErrors.RelatedEntityNotFound), null);
+
+        EventDetails newEventDetailsEntity = new()
+        {
+            StartDate = caseContext.StartTime,
+            Description = caseContext.Description,
+            Duration = caseContext.Duration
+        };
+
+        Event eventEntity = new()
+        {
+            Title = caseContext.Title,
+            EventGenreId = caseContext.GenreId,
+            HostId = caseContext.HostId,
+            EventDetails = newEventDetailsEntity,
+            EventStatusId = plannedStatusEntity.Id
+        };
+        
+        return (null, eventEntity);
+    }
+
+    private async Task<Result<object>?> CreateEventTickets(PlaneEventDto caseContext, Event eventEntity)
+    {
+        HostDetails? hostDetails = await _context.HostDetails
+            .AsNoTracking()
+            .FirstOrDefaultAsync(hd => hd.Id == caseContext.HostId);
+        
+        TicketStatus? availableStatusEntity = await _context.TicketStatuses
+            .FirstOrDefaultAsync(ts => ts.Status == ServicesEnums.TicketAvailableStatus);
+
+        if (hostDetails is null || availableStatusEntity is null)
+            return Result<object>.Failure(DomainErrors.RelatedEntityNotFound);
+
+        if (hostDetails.RowAmount !=
+            caseContext.TicketTypes
+                .SelectMany(tt => tt.RowsWithTicketType)
+                .Distinct()
+                .Count())
+            return Result<object>.Failure(DomainErrors.TicketTypeMappingMissmatchHall);
+
+        List<Ticket> newTicketEntities = new();
+        
+        foreach (CreateTicketTypeDto ticketType in caseContext.TicketTypes)
+        {
+            TicketType ticketTypeEntity = new()
+            {
+                Event = eventEntity,
+                Name = ticketType.Name,
+                Price = ticketType.Price
+            };
+
+            foreach (int rowNum in ticketType.RowsWithTicketType)
+            {
+                for (int seatNum = 1; seatNum <= hostDetails.SeatsInRow; seatNum++)
+                {
+                    Ticket ticketEntity = new()
+                    {
+                        RowNum = rowNum,
+                        SeatNum = seatNum,
+                        TicketStatusId = availableStatusEntity.Id,
+                        TicketType = ticketTypeEntity
+                    };
+                    
+                    newTicketEntities.Add(ticketEntity);
+                }
+            }
+        }
+
+        await _context.Tickets.AddRangeAsync(newTicketEntities);
+
+        return null;
+    } 
+    
     private Task<IQueryable<Event>> ProcessEventFilter(
         IQueryable<Event> eventsQuery,
         EventFilter filter,
