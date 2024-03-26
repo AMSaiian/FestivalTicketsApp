@@ -21,11 +21,6 @@ public class ClientConfiguration : IEntityTypeConfiguration<Client>
         builder.Property(u => u.Email)
             .IsRequired();
 
-        builder.HasIndex(u => u.PhoneNumber)
-            .IsUnique();
-        builder.Property(u => u.PhoneNumber)
-            .IsRequired();
-
         builder.HasMany(u => u.FavouriteEvents)
             .WithMany(e => e.AddedToFavouriteBy);
 

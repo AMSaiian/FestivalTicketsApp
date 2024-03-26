@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext(builder.Configuration);
 
-builder.Services.AddIdentity();
+// builder.Services.AddIdentity();
 
 builder.Services.AddServices();
 
@@ -33,7 +33,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages();
+// app.MapRazorPages();
 
 try
 {

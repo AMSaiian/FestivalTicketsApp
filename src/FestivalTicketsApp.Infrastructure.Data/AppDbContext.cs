@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FestivalTicketsApp.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
-    : IdentityDbContext<Client, IdentityRole<int>, int>(options)
+    : DbContext(options)
 {
     public DbSet<Client> Clients { get; set; } = default!;
 

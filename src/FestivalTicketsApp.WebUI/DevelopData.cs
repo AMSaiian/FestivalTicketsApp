@@ -122,12 +122,12 @@ public static class DevelopData
         new() 
         { 
             Name = "Client1", Surname = "SurClient1", 
-            Email = "tempemail1@gmail.com", PhoneNumber = "+380950000001" 
+            Email = "tempemail1@gmail.com" 
         },
         new()
         {
             Name = "Client2", Surname = "SurClient2", 
-            Email = "tempemail2@gmail.com", PhoneNumber = "+380950000002"
+            Email = "tempemail2@gmail.com"
         },
     ];
 

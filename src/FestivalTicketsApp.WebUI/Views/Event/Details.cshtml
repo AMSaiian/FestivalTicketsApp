@@ -1,7 +1,7 @@
 ﻿@using FestivalTicketsApp.WebUI.Models.Event
 @model FestivalTicketsApp.WebUI.Models.Event.EventDetailsViewModel
 
-@inject SignInManager<Client> SignInManager
+@* @inject SignInManager<Client> SignInManager *@
 
 <div class="container h-100 d-flex flex-column">
     <div class="row mt-2">
@@ -9,15 +9,15 @@
             <h1 class="fw-bold">@Model.Event.Title</h1>
         </div>
         <div class="col-2 my-auto">
-        @if (SignInManager.IsSignedIn(User))
-        {
-            await Html.RenderPartialAsync("FavouritePart",
-                new FavouritePartViewModel
-                {
-                    EventId = int.Parse(ViewContext.RouteData.Values["id"].ToString()),
-                    IsInFavourite = Model.IsInFavourite ?? false
-                });
-        }
+        @* @if (SignInManager.IsSignedIn(User)) *@
+        @* { *@
+        @*     await Html.RenderPartialAsync("FavouritePart", *@
+        @*         new FavouritePartViewModel *@
+        @*         { *@
+        @*             EventId = int.Parse(ViewContext.RouteData.Values["id"].ToString()), *@
+        @*             IsInFavourite = Model.IsInFavourite ?? false *@
+        @*         }); *@
+        @* } *@
         </div>
     </div>
     <div class="row mt-4">

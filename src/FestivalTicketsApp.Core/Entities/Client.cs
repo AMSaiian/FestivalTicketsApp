@@ -2,11 +2,13 @@
 
 namespace FestivalTicketsApp.Core.Entities;
 
-public class Client : IdentityUser<int>
+public class Client : BaseEntity
 {
     public string Name { get; set; } = default!;
 
     public string Surname { get; set; } = default!;
+
+    public string Email { get; set; } = default!;
 
     public List<Ticket> PurchasedTickets { get; set; } = [];
 
