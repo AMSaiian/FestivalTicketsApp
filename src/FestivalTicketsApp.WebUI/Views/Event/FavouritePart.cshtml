@@ -1,0 +1,46 @@
+﻿@model FestivalTicketsApp.WebUI.Models.Event.FavouritePartViewModel
+
+@{
+    const string addToFavouriteText = "Add to favourite";
+    const string deleteFromFavouriteText = "Delete from favourite";
+}
+
+<button class="btn-secondary" id="favourite-btn" value="@Model.IsInFavourite.ToString().ToLower()">
+    @if (Model.IsInFavourite)
+    {
+        <text>@deleteFromFavouriteText</text>
+    }
+    else
+    {
+        <text>@addToFavouriteText</text>
+    }
+</button>
+
+<script>
+    $(document).ready(() => {
+        const favouriteButton = $("#favourite-btn");
+        favouriteButton.click(() => {
+            const currentStatus = JSON.parse(favouriteButton.val());
+            $.ajax({
+            url: "@Url.Action(
+                      action: "ChangeFavouriteStatus", 
+                      controller: "Client", 
+                      values: new { id = Model.EventId })",
+            data: { newStatus: !currentStatus },
+            method: "GET",
+            success: () => {
+                favouriteButton.val(!currentStatus);
+                
+                let nextText;
+                if (!currentStatus) {
+                    nextText = "@deleteFromFavouriteText";
+                }
+                else {
+                    nextText = "@addToFavouriteText";
+                }
+                
+                favouriteButton.text(nextText);
+            }});
+        })
+    })
+</script>
