@@ -19,7 +19,18 @@ internal static class HostingExtensions
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 8;
+            })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
@@ -32,6 +43,7 @@ internal static class HostingExtensions
                 options.Events.RaiseSuccessEvents = true;
                 options.EmitStaticAudienceClaim = true;
             })
+            .AddDeveloperSigningCredential()
             .AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = b => 

@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext(builder.Configuration);
 
-// builder.Services.AddIdentity();
+builder.Services.AddExternalAuthentication();
 
 builder.Services.AddServices();
 
